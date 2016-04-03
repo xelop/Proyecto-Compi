@@ -6,9 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class Main {
+    
+    private static ArrayList<TokenDesplegable> tokens;
 
     public static void main(String[] args) {
         String path = "./src/lexer/lexer.flex";
@@ -27,6 +31,7 @@ public class Main {
         jflex.Main.generate(file);
     }
     public static void Scan() throws IOException{
+        tokens = new ArrayList<TokenDesplegable>();
         Reader reader = new BufferedReader(new FileReader("Prueba.mypy"));
         Lexer lexer = new Lexer(reader);
         String resultado = "";
@@ -45,11 +50,44 @@ public class Main {
                         System.out.println("ERROR");
                         break;
                     default:
-                        resultado = resultado + lexer.lexeme + " y de tipo: " + currentToken + ".\n";
+                        createToken(lexer.lexeme, currentToken.toString(), 0); //en cero ya que no se como obtener la linea del reader
                         break;
                 }
             }
         }
-        System.out.println(resultado);
+        Collections.sort(tokens);
+        printTokens();
+    }
+    
+    private static void printTokens(){
+        
+        Collections.sort(tokens); 
+        
+        for(TokenDesplegable token: tokens)
+            System.out.println(token.toString());
+        
+    }
+    
+    private static void createToken(String pNombre, String pTipo, int pNumeroLinea){
+        
+        TokenDesplegable tokenActual = verificarToken(pNombre);
+        
+        if(tokenActual != null){
+            tokenActual.crearLinea(pNumeroLinea);
+        } else {
+            tokenActual = new TokenDesplegable(pNombre, pTipo);
+            tokenActual.crearLinea(pNumeroLinea);
+            tokens.add(tokenActual);
+        }
+        
+    }
+    
+    private static TokenDesplegable verificarToken(String pToken){
+        
+        for(TokenDesplegable nuevoToken: tokens ){
+            if(nuevoToken.compareName(pToken))
+                return nuevoToken;
+        }
+        return null;
     }
 }

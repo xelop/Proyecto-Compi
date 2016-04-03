@@ -11,7 +11,6 @@ public String lexeme;
 %}
 %%
 {WHITE} {/*Ignore*/}
-"//" {/*Ignore*/}
 
 "+" {lexeme = yytext(); return opSuma;}
 "-" {lexeme = yytext(); return opResta;}

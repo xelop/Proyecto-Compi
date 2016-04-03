@@ -34,8 +34,8 @@ class Lexer {
    */
   private static final String ZZ_CMAP_PACKED = 
     "\11\0\1\32\1\3\1\33\1\33\1\3\22\0\1\3\1\12\3\0"+
-    "\1\10\1\26\1\0\1\15\1\16\1\7\1\5\1\17\1\6\1\20"+
-    "\1\4\12\2\2\0\1\13\1\11\1\14\2\0\32\1\3\0\1\30"+
+    "\1\10\1\26\1\0\1\15\1\16\1\6\1\4\1\17\1\5\1\20"+
+    "\1\7\12\2\2\0\1\13\1\11\1\14\2\0\32\1\3\0\1\30"+
     "\1\1\1\0\1\21\2\1\1\23\11\1\1\22\1\24\2\1\1\25"+
     "\10\1\1\0\1\27\1\0\1\31\6\0\1\33\u1fa2\0\1\33\1\33"+
     "\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\udfe6\0";
@@ -54,9 +54,9 @@ class Lexer {
     "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7"+
     "\1\10\1\11\1\12\1\1\1\13\1\14\1\15\1\16"+
     "\1\17\1\20\3\2\1\21\1\22\1\23\1\24\1\25"+
-    "\1\4\1\26\1\27\1\30\1\31\1\32\1\33\1\34"+
-    "\1\35\1\36\1\37\1\40\1\41\1\0\2\2\1\42"+
-    "\1\43\1\44\1\0\1\45\1\46\1\3";
+    "\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35"+
+    "\1\36\1\37\1\40\1\41\1\42\1\0\2\2\1\43"+
+    "\1\44\1\45\1\0\1\46\1\47\1\3";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[49];
@@ -87,7 +87,7 @@ class Lexer {
     "\0\0\0\34\0\70\0\124\0\34\0\160\0\214\0\250"+
     "\0\304\0\34\0\340\0\374\0\u0118\0\u0134\0\u0150\0\34"+
     "\0\34\0\34\0\u016c\0\u0188\0\u01a4\0\34\0\34\0\34"+
-    "\0\34\0\34\0\u01c0\0\34\0\34\0\34\0\u01dc\0\34"+
+    "\0\34\0\34\0\34\0\34\0\u01c0\0\34\0\u01dc\0\34"+
     "\0\34\0\34\0\34\0\34\0\34\0\34\0\34\0\u01f8"+
     "\0\u0214\0\u0230\0\70\0\34\0\34\0\u024c\0\70\0\70"+
     "\0\34";
@@ -120,10 +120,10 @@ class Lexer {
     "\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21"+
     "\1\22\1\23\1\24\1\3\1\25\1\3\1\26\1\27"+
     "\1\30\1\31\1\32\36\0\2\3\16\0\5\3\10\0"+
-    "\1\4\35\0\1\33\4\0\1\34\33\0\1\35\33\0"+
+    "\1\4\42\0\1\33\33\0\1\34\30\0\1\35\2\0"+
     "\1\36\31\0\1\37\1\0\1\40\33\0\1\41\33\0"+
     "\1\42\33\0\1\43\1\0\1\44\1\45\30\0\1\46"+
-    "\2\0\1\47\25\0\1\50\26\0\2\3\16\0\1\3"+
+    "\2\0\1\47\24\0\1\50\27\0\2\3\16\0\1\3"+
     "\1\51\3\3\7\0\2\3\16\0\3\3\1\52\1\3"+
     "\7\0\2\3\16\0\4\3\1\53\17\0\1\54\33\0"+
     "\1\55\24\0\1\56\32\0\2\3\16\0\2\3\1\57"+
@@ -170,7 +170,7 @@ class Lexer {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\1\0\1\11\2\1\1\11\4\1\1\11\5\1\3\11"+
-    "\3\1\5\11\1\1\3\11\1\1\10\11\1\0\3\1"+
+    "\3\1\7\11\1\1\1\11\1\1\10\11\1\0\3\1"+
     "\2\11\1\0\2\1\1\11";
 
   private static int [] zzUnpackAttribute() {
@@ -570,155 +570,159 @@ public String lexeme;
           case 1: 
             { return ERROR;
             }
-          case 39: break;
+          case 40: break;
           case 2: 
             { lexeme=yytext(); return Identificador;
             }
-          case 40: break;
+          case 41: break;
           case 3: 
             { lexeme=yytext(); return INT;
             }
-          case 41: break;
+          case 42: break;
           case 4: 
             { /*Ignore*/
             }
-          case 42: break;
-          case 5: 
-            { lexeme = yytext(); return opDiv;
-            }
           case 43: break;
-          case 6: 
+          case 5: 
             { lexeme = yytext(); return opSuma;
             }
           case 44: break;
-          case 7: 
+          case 6: 
             { lexeme = yytext(); return opResta;
             }
           case 45: break;
-          case 8: 
+          case 7: 
             { lexeme = yytext(); return opMult;
             }
           case 46: break;
+          case 8: 
+            { lexeme = yytext(); return opDiv;
+            }
+          case 47: break;
           case 9: 
             { lexeme = yytext(); return opMod;
             }
-          case 47: break;
+          case 48: break;
           case 10: 
             { lexeme = yytext(); return opIgual;
             }
-          case 48: break;
+          case 49: break;
           case 11: 
             { lexeme = yytext(); return opMenorQue;
             }
-          case 49: break;
+          case 50: break;
           case 12: 
             { lexeme = yytext(); return opMayorQue;
             }
-          case 50: break;
+          case 51: break;
           case 13: 
             { lexeme = yytext(); return opParentesis1;
             }
-          case 51: break;
+          case 52: break;
           case 14: 
             { lexeme = yytext(); return opParentesis2;
             }
-          case 52: break;
+          case 53: break;
           case 15: 
             { lexeme = yytext(); return opComa;
             }
-          case 53: break;
+          case 54: break;
           case 16: 
             { lexeme = yytext(); return opPunto;
             }
-          case 54: break;
+          case 55: break;
           case 17: 
             { lexeme = yytext(); return opANDBits;
             }
-          case 55: break;
+          case 56: break;
           case 18: 
             { lexeme = yytext(); return opORBits;
             }
-          case 56: break;
+          case 57: break;
           case 19: 
             { lexeme = yytext(); return opXOR;
             }
-          case 57: break;
+          case 58: break;
           case 20: 
             { lexeme = yytext(); return opNOTBits;
             }
-          case 58: break;
+          case 59: break;
           case 21: 
             { lexeme = yytext(); return opTAB;
             }
-          case 59: break;
-          case 22: 
-            { lexeme = yytext(); return opDivIgual;
-            }
           case 60: break;
-          case 23: 
+          case 22: 
             { lexeme = yytext(); return opMasIgual;
             }
           case 61: break;
-          case 24: 
+          case 23: 
             { lexeme = yytext(); return opMenosIgual;
             }
           case 62: break;
-          case 25: 
+          case 24: 
             { lexeme = yytext(); return opExponente;
             }
           case 63: break;
-          case 26: 
+          case 25: 
             { lexeme = yytext(); return opMulIgual;
             }
           case 64: break;
-          case 27: 
-            { lexeme = yytext(); return opExactamenteIgual;
+          case 26: 
+            { lexeme = yytext(); return opDivEntera;
             }
           case 65: break;
-          case 28: 
-            { lexeme = yytext(); return opDiferencia;
+          case 27: 
+            { lexeme = yytext(); return opDivIgual;
             }
           case 66: break;
-          case 29: 
-            { lexeme = yytext(); return opMenorOIgual;
+          case 28: 
+            { lexeme = yytext(); return opExactamenteIgual;
             }
           case 67: break;
-          case 30: 
-            { lexeme = yytext(); return opShiftIzquierdo;
+          case 29: 
+            { lexeme = yytext(); return opDiferencia;
             }
           case 68: break;
-          case 31: 
-            { lexeme = yytext(); return opDiferencia2;
+          case 30: 
+            { lexeme = yytext(); return opMenorOIgual;
             }
           case 69: break;
-          case 32: 
-            { lexeme = yytext(); return opMayorOIgual;
+          case 31: 
+            { lexeme = yytext(); return opShiftIzquierdo;
             }
           case 70: break;
-          case 33: 
-            { lexeme = yytext(); return opShiftDerecho;
+          case 32: 
+            { lexeme = yytext(); return opDiferencia2;
             }
           case 71: break;
-          case 34: 
-            { lexeme = yytext(); return opORLog;
+          case 33: 
+            { lexeme = yytext(); return opMayorOIgual;
             }
           case 72: break;
-          case 35: 
-            { lexeme = yytext(); return opDivEnteraIgual;
+          case 34: 
+            { lexeme = yytext(); return opShiftDerecho;
             }
           case 73: break;
+          case 35: 
+            { lexeme = yytext(); return opORLog;
+            }
+          case 74: break;
           case 36: 
             { lexeme = yytext(); return opExponenteIgual;
             }
-          case 74: break;
-          case 37: 
-            { lexeme = yytext(); return opANDLog;
-            }
           case 75: break;
-          case 38: 
-            { lexeme = yytext(); return opNOTLog;
+          case 37: 
+            { lexeme = yytext(); return opDivEnteraIgual;
             }
           case 76: break;
+          case 38: 
+            { lexeme = yytext(); return opANDLog;
+            }
+          case 77: break;
+          case 39: 
+            { lexeme = yytext(); return opNOTLog;
+            }
+          case 78: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }
