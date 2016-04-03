@@ -1,17 +1,35 @@
 package lexer;
 import static lexer.Token.*;
 %%
+
 %class Lexer
 %type Token
-L = [a-zA-Z_]
-N = [0-9]
-WHITE=[ \r\n]
-%{
-public String lexeme;
-%}
-%%
-{WHITE} {/*Ignore*/}
+%line
+%column
 
+%{
+    //esto se copia directamente
+    public String lexeme;
+    public int getLine(){
+        return yyline;
+    }
+%}
+
+Letra = [a-zA-Z_]
+Numero = [0-9]
+WhiteSpace = {LineTerminator} | [ ]
+LineTerminator = [\r|\n|\r\n]
+InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
+
+Comentario = {ComentarioDeLinea}
+ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
+
+%%
+/* Comentarios y espacios en blanco son ignorados */
+{WhiteSpace} {/* ignore */}
+{Comentario} { /* ignore */ }
+
+/* Operadores */
 "+" {lexeme = yytext(); return opSuma;}
 "-" {lexeme = yytext(); return opResta;}
 "*" {lexeme = yytext(); return opMult;}
@@ -48,8 +66,43 @@ public String lexeme;
 "~" {lexeme = yytext(); return opNOTBits;}
 "\t" {lexeme = yytext(); return opTAB;}
 
+/* Palabras reservadas */
+/*"AND" {lexeme = yytext(); return rAnd;}
+"OR" {lexeme = yytext(); return rOr;}
+"NOT" {lexeme = yytext(); return rNot;} Estos hay que preguntar*/
+"assert" {lexeme = yytext(); return rAssert;}
+"break" {lexeme = yytext(); return rBreak;}
+"class" {lexeme = yytext(); return rClass;}
+"continue" {lexeme = yytext(); return rContinue;}
+"def" {lexeme = yytext(); return rDel;}
+"del" {lexeme = yytext(); return rDel;}
+"elif" {lexeme = yytext(); return rElif;}
+"else" {lexeme = yytext(); return rElse;}
+"except" {lexeme = yytext(); return rExcept;}
+"exec" {lexeme = yytext(); return rExec;}
+"finally" {lexeme = yytext(); return rFinally;}
+"for" {lexeme = yytext(); return rFor;}
+"from" {lexeme = yytext(); return rFrom;}
+"global" {lexeme = yytext(); return rGlobal;}
+"if" {lexeme = yytext(); return rIf;}
+"import" {lexeme = yytext(); return rImport;}
+"in" {lexeme = yytext(); return rIn;}
+"is" {lexeme = yytext(); return rIs;}
+"lambda" {lexeme = yytext(); return rLambda;}
+"pass" {lexeme = yytext(); return rPass;}
+"print" {lexeme = yytext(); return rPrint;}
+"raise" {lexeme = yytext(); return rRaise;}
+"return" {lexeme = yytext(); return rReturn;}
+"try" {lexeme = yytext(); return rTry;}
+"while" {lexeme = yytext(); return rWhile;}
+"int" {lexeme = yytext(); return rInt;}
+"float" {lexeme = yytext(); return rFloat;}
+"string" {lexeme = yytext(); return rString;}
+"list" {lexeme = yytext(); return rList;}
+"bool" {lexeme = yytext(); return rBool;}
 
+{Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
+ ("(-"{Numero}+")")|{Numero}+ {lexeme=yytext(); return INT;}
 
-{L}({L}|{N})* {lexeme=yytext(); return Identificador;}
- ("(-"{N}+")")|{N}+ {lexeme=yytext(); return INT;}
-. {return ERROR;}
+/* Error */
+. {lexeme = yytext();return ERROR;}

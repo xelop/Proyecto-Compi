@@ -8,16 +8,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author Adrian
- */
 public class ScannerController {
     
     private ArrayList<TokenDesplegable> tokens;
@@ -29,7 +20,6 @@ public class ScannerController {
     }
     
     public void Scan() throws IOException{
-        String resultado = "";
         Reader reader = new BufferedReader(new FileReader(path));
         Lexer lexer = new Lexer(reader);
         Token currentToken;
@@ -37,17 +27,15 @@ public class ScannerController {
             currentToken = lexer.yylex();
             if (currentToken == null){
                 //se llega al final del archivo.
-                
                 break;
             }
             else{
                 switch(currentToken){
                     case ERROR:
-                        resultado = resultado + "Error : " + lexer.lexeme + ".\n";
-                        System.out.println("ERROR");
+                        System.out.println("Error : " + lexer.lexeme + ".\n");
                         break;
                     default:
-                        createToken(lexer.lexeme, currentToken.toString(), 0); //en cero ya que no se como obtener la linea del reader
+                        createToken(lexer.lexeme, currentToken.toString(), lexer.getLine()); 
                         break;
                 }
             }
