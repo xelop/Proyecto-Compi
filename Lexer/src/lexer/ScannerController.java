@@ -35,7 +35,7 @@ public class ScannerController {
                         System.out.println("Error : " + lexer.lexeme + ".\n");
                         break;
                     default:
-                        createToken(lexer.lexeme, currentToken.toString(), lexer.getLine()); 
+                        createToken(lexer.lexeme, currentToken.toString(), lexer.getLine()+1); 
                         break;
                 }
             }
