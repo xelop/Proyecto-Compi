@@ -29,8 +29,9 @@ WhiteSpace = {LineTerminator} | [ ]
 LineTerminator = [\r|\n|\r\n]
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
 
-Comentario = {ComentarioDeLinea}
+Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
+ComentarioDeBloque = """.*"""
 
 %%
 /* Comentarios y espacios en blanco son ignorados */
