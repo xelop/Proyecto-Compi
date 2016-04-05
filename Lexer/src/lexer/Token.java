@@ -17,7 +17,7 @@ public enum Token {
         rInt,rFloat,rString,rList,rBool,//sera un python tipado
         
     //Literales
-        INT,FLOAT,CHAR,STRING,
+        INT,FLOAT,CHAR,MYSTRING,
         
     //ERROR
         ERROR

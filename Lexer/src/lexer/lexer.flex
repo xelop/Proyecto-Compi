@@ -6,9 +6,13 @@ import static lexer.Token.*;
 %type Token
 %line
 %column
+%state STRING
 
 %{
     //esto se copia directamente
+
+    StringBuffer string = new StringBuffer();
+
     public String lexeme;
     public int getLine(){
         return yyline;
@@ -17,6 +21,10 @@ import static lexer.Token.*;
 
 Letra = [a-zA-Z_]
 Numero = [0-9]
+Binario = [0|1]
+Octal = [0-7]
+Operador = [+,-] /*No se si tener todos los valores de operador servira para arreglar el ER de identificador */
+Hexadecimal = [0-9|a-f]
 WhiteSpace = {LineTerminator} | [ ]
 LineTerminator = [\r|\n|\r\n]
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
@@ -29,7 +37,23 @@ ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 {WhiteSpace} {/* ignore */}
 {Comentario} { /* ignore */ }
 
+<YYINITIAL> {
+
+ "|" {lexeme = yytext(); return opORBits;}
+ \"                             { string.setLength(0); yybegin(STRING); }
+ {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
+ {Numero}+({WhiteSpace}|{Operador}) {lexeme=yytext(); return INT;}
+ 0"b"{Binario}+({WhiteSpace}|{Operador})  {lexeme=yytext(); return INT;}
+ 0"o"{Octal}+  {lexeme=yytext(); return INT;}
+ 0"x"{Hexadecimal}+  {lexeme=yytext(); return INT;}
+ ({Numero}+"."{Numero}|0"."{Numero}) {lexeme=yytext(); return FLOAT;}
+
+ '{InputCharacter}' {lexeme=yytext(); return CHAR;}
+
+}
+
 /* Operadores */
+
 "+" {lexeme = yytext(); return opSuma;}
 "-" {lexeme = yytext(); return opResta;}
 "*" {lexeme = yytext(); return opMult;}
@@ -61,7 +85,6 @@ ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 "or" {lexeme = yytext(); return opORLog;}
 "nor" {lexeme = yytext(); return opNOTLog;}
 "&" {lexeme = yytext(); return opANDBits;}
-"|" {lexeme = yytext(); return opORBits;}
 "^" {lexeme = yytext(); return opXOR;}
 "~" {lexeme = yytext(); return opNOTBits;}
 "\t" {lexeme = yytext(); return opTAB;}
@@ -101,8 +124,21 @@ ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 "list" {lexeme = yytext(); return rList;}
 "bool" {lexeme = yytext(); return rBool;}
 
-{Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
- ("(-"{Numero}+")")|{Numero}+ {lexeme=yytext(); return INT;}
+
+<STRING> {
+  \"                             { yybegin(YYINITIAL);
+                                   lexeme = string.toString();
+                                   return MYSTRING; }   /*Numero linea = adonde termino, no deja solo STRING */
+  [^\n\r\"\\]+                   { string.append( yytext() ); }
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  \\                             { string.append('\\'); }
+}
+
+
 
 /* Error */
 . {lexeme = yytext();return ERROR;}

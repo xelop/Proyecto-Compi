@@ -12,11 +12,13 @@ import java.util.Collections;
 public class ScannerController {
     
     private ArrayList<TokenDesplegable> tokens;
+    private ArrayList<String> errores;
     private String path;
     
     public ScannerController(String pPath){
         path = pPath;
         tokens = new ArrayList<TokenDesplegable>();
+        errores = new ArrayList<String>();
     }
     
     public void Scan() throws IOException{
@@ -32,7 +34,8 @@ public class ScannerController {
             else{
                 switch(currentToken){
                     case ERROR:
-                        System.out.println("Error : " + lexer.lexeme + ".\n");
+                        String error = "Error : " + lexer.lexeme + ".";
+                        errores.add(error);
                         break;
                     default:
                         createToken(lexer.lexeme, currentToken.toString(), lexer.getLine()+1); 
@@ -41,6 +44,7 @@ public class ScannerController {
             }
         }
         Collections.sort(tokens);
+        printErrores();
         printTokens();
     }
     
@@ -51,6 +55,12 @@ public class ScannerController {
         for(TokenDesplegable token: tokens)
             System.out.println(token.toString());
         
+    }
+    
+    private void printErrores(){
+        for (String error: errores) {
+            System.out.println(error);
+        }
     }
     
     private void createToken(String pNombre, String pTipo, int pNumeroLinea){
