@@ -31,7 +31,7 @@ InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
 
 Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
-ComentarioDeBloque = """.*"""
+ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 %%
 /* Comentarios y espacios en blanco son ignorados */
