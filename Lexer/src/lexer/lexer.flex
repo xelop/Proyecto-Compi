@@ -39,21 +39,22 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 {Comentario} { /* ignore */ }
 
 <YYINITIAL> {
-
- "|" {lexeme = yytext(); return opORBits;}
  \"                             { string.setLength(0); yybegin(STRING); }
+ 0("b"|"B"){Binario}+ {lexeme=yytext(); return INT;}
  {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
  {Numero}+({WhiteSpace}|{Operador}) {lexeme=yytext(); return INT;}
- 0"b"{Binario}+({WhiteSpace}|{Operador})  {lexeme=yytext(); return INT;}
- 0"o"{Octal}+  {lexeme=yytext(); return INT;}
- 0"x"{Hexadecimal}+  {lexeme=yytext(); return INT;}
- ({Numero}+"."{Numero}|0"."{Numero}) {lexeme=yytext(); return FLOAT;}
+ 0("o"|"O"){Octal}+  {lexeme=yytext(); return INT;}
+ 0("x"|"X"){Hexadecimal}+  {lexeme=yytext(); return INT;}
+
+ ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
 
  '{InputCharacter}' {lexeme=yytext(); return CHAR;}
 
 }
 
 /* Operadores */
+
+'\|' {lexeme = yytext(); return opORBits;}
 
 "+" {lexeme = yytext(); return opSuma;}
 "-" {lexeme = yytext(); return opResta;}
@@ -131,6 +132,8 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
                                    lexeme = string.toString();
                                    return MYSTRING; }   /*Numero linea = adonde termino, no deja solo STRING */
   [^\n\r\"\\]+                   { string.append( yytext() ); }
+<<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
+
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
 

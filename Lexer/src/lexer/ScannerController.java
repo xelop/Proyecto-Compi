@@ -46,6 +46,7 @@ public class ScannerController {
         Collections.sort(tokens);
         printErrores();
         printTokens();
+        reader.close();
     }
     
     private void printTokens(){
