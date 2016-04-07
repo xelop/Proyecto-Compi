@@ -38,6 +38,7 @@ public class ScannerController {
                         errores.add(error);
                         break;
                     default:
+                        System.out.println(lexer.lexeme);
                         createToken(lexer.lexeme, currentToken.toString(), lexer.getLine()+1); 
                         break;
                 }
@@ -46,7 +47,6 @@ public class ScannerController {
         Collections.sort(tokens);
         printErrores();
         printTokens();
-        reader.close();
     }
     
     private void printTokens(){

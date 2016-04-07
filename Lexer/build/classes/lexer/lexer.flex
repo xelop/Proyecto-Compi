@@ -26,7 +26,7 @@ Octal = [0-7]
 Operador = [+,-] /*No se si tener todos los valores de operador servira para arreglar el ER de identificador */
 Hexadecimal = [0-9|a-f]
 WhiteSpace = {LineTerminator} | [ ]
-LineTerminator = [\r|\n|\r\n]
+LineTerminator = (\r\n|\r|\n)
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
 
 Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
@@ -35,6 +35,9 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 %%
 /* Comentarios y espacios en blanco son ignorados */
+
+
+
 {WhiteSpace} {/* ignore */}
 {Comentario} { /* ignore */ }
 
@@ -48,13 +51,14 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
  ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
 
- '{InputCharacter}' {lexeme=yytext(); return CHAR;}
+ '{InputCharacter}' {lexeme=yytext(); return CHAR;} /* arreglar char */
+
+ \u007C {lexeme=yytext(); return opORBits;}
 
 }
 
 /* Operadores */
 
-'\|' {lexeme = yytext(); return opORBits;}
 
 "+" {lexeme = yytext(); return opSuma;}
 "-" {lexeme = yytext(); return opResta;}
@@ -129,14 +133,13 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 <STRING> {
   \"                             { yybegin(YYINITIAL);
-                                   lexeme = string.toString();
+                                   lexeme = "\"" +string.toString()+"\"";
                                    return MYSTRING; }   /*Numero linea = adonde termino, no deja solo STRING */
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
+ \S                   { string.append( yytext() ); }
 <<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
 
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
-
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
