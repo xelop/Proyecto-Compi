@@ -6,8 +6,8 @@ import static lexer.Token.*;
 %type Token
 %line
 %column
-%state STRING
-%state CHAR
+%state MYSTRING
+%state MYCHAR
 
 %{
     //esto se copia directamente
@@ -40,18 +40,17 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 
 <YYINITIAL> {
- \"                             { string.setLength(0); cambioLinea = false; yybegin(STRING); }
+ \"                             { string.setLength(0); cambioLinea = false; yybegin(MYSTRING); }
  {WhiteSpace} {/* ignore */}
  {Comentario} {/* ignore */}
  0("b"|"B"){Binario}+ {lexeme=yytext(); return INT;}
- {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
  {Numero}+ {lexeme=yytext(); return INT;}
  0("o"|"O"){Octal}+  {lexeme=yytext(); return INT;}
  0("x"|"X"){Hexadecimal}+  {lexeme=yytext(); return INT;}
 
  ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
 
- \' {string.setLength(0); yybegin(CHAR);} 
+ \' {string.setLength(0); yybegin(MYCHAR);} 
 
  \u007C {lexeme=yytext(); return opORBits;}
 
@@ -127,28 +126,31 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 "string" {lexeme = yytext(); return rString;}
 "list" {lexeme = yytext(); return rList;}
 "bool" {lexeme = yytext(); return rBool;}
+{Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
 
 }
 
-<CHAR> {
+<MYCHAR> {
 
 \'                              {yybegin(YYINITIAL); lexeme = "'"+ string.toString()+"'"; 
                                  if(string.length()>1)
                                     return ERROR;
                                  else
-                                    return MYCHAR;   }
-\S                              { string.append( yytext() );}
+                                    return CHAR;   }
+<<EOF>>                          { yybegin(YYINITIAL); lexeme = "Char sin terminar: " + string.toString(); return ERROR;}
+\S                               { string.append( yytext() );}
+
 
 }
-<STRING> {
+<MYSTRING> {
   {LineTerminator}               { cambioLinea = true;}
   \"                             { yybegin(YYINITIAL);
                                    lexeme = "\"" +string.toString()+"\"";
                                    if(cambioLinea){
                                         return ERROR;
                                    }else{
-                                        return MYSTRING;
-                                   }} /*Numero linea = adonde termino, no deja solo STRING */
+                                        return STRING;
+                                   }} /*Numero linea = adonde terminO*/
  \S                   { string.append( yytext() ); }
 <<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
 
@@ -156,7 +158,7 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
   \\n                            { string.append('\n'); }
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
-  \\                             { string.append('\\'); }
+
 }
 
 
