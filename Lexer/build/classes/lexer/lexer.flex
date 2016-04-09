@@ -75,7 +75,7 @@ opDelimitadores ="("|")"|"[""]"|","|"."|":"|"\t"
 /* Palabras reservadas */
 {PalabraRerservada} {lexeme = yytext(); return PalabraReservada;}
 
-{Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme="string"+yytext(); return ERROR;} 
+{Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme=yytext(); return ERROR;} 
 {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;}
 
 }
