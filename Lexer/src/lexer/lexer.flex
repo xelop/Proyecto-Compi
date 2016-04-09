@@ -39,25 +39,21 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 /* Comentarios y espacios en blanco son ignorados */
 
 
-
-{WhiteSpace} {/* ignore */}
-{Comentario} {/* ignore */ }
-
 <YYINITIAL> {
  \"                             { string.setLength(0); cambioLinea = false; yybegin(STRING); }
+ {WhiteSpace} {/* ignore */}
+ {Comentario} {/* ignore */}
  0("b"|"B"){Binario}+ {lexeme=yytext(); return INT;}
  {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
- {Numero}+({WhiteSpace}|{Operador}) {lexeme=yytext(); return INT;}
+ {Numero}+ {lexeme=yytext(); return INT;}
  0("o"|"O"){Octal}+  {lexeme=yytext(); return INT;}
  0("x"|"X"){Hexadecimal}+  {lexeme=yytext(); return INT;}
 
  ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
 
- \' {string.setLength(0); yybegin(CHAR);} /* arreglar char */
+ \' {string.setLength(0); yybegin(CHAR);} 
 
  \u007C {lexeme=yytext(); return opORBits;}
-
-}
 
 /* Operadores */
 
@@ -132,6 +128,8 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 "list" {lexeme = yytext(); return rList;}
 "bool" {lexeme = yytext(); return rBool;}
 
+}
+
 <CHAR> {
 
 \'                              {yybegin(YYINITIAL); lexeme = "'"+ string.toString()+"'"; 
@@ -143,7 +141,7 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 }
 <STRING> {
-  \\n                          { cambioLinea = true; System.out.println("entre"); }
+  {LineTerminator}               { cambioLinea = true;}
   \"                             { yybegin(YYINITIAL);
                                    lexeme = "\"" +string.toString()+"\"";
                                    if(cambioLinea){
@@ -155,7 +153,8 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 <<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
 
   \\t                            { string.append('\t'); }
-  \r                            { cambioLinea = true; }
+  \\n                            { string.append('\n'); }
+  \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
 }
