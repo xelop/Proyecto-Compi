@@ -30,7 +30,7 @@ Hexadecimal = ([0-9]|[a-f])
 WhiteSpace = {LineTerminator} | [ ]
 LineTerminator = (\r\n|\r|\n)
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
-IdentificadorInvalido = ([^A-Za-z\r\n_0-9 ])
+IdentificadorInvalido = ([^\x00-\x7F])
 
 Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
