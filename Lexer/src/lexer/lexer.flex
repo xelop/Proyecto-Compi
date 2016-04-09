@@ -44,10 +44,10 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
  {WhiteSpace} {/* ignore */}
  {Comentario} {/* ignore */}
  0("b"|"B"){Binario}+ {lexeme=yytext(); return INT;}
- {Numero}+ {lexeme=yytext(); return INT;}
  0("o"|"O"){Octal}+  {lexeme=yytext(); return INT;}
  0("x"|"X"){Hexadecimal}+  {lexeme=yytext(); return INT;}
-
+ {Numero}+({Letra}+{Numero}*)+ {lexeme = yytext(); return ERROR;}
+ {Numero}+ {lexeme=yytext(); return INT;}
  ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
 
  \' {string.setLength(0); yybegin(MYCHAR);} 
