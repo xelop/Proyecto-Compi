@@ -3,9 +3,8 @@
 == != <> < > <= >= 
 ( ) , . : 	
 >> << | & ~ ^
-and
-or
-not
+and or not
 
 $ @
 
+break for while

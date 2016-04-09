@@ -10,7 +10,7 @@ public enum Token {
         opDiferencia,opDiferencia2,opMayorQue,opMenorQue,opMayorOIgual,opMenorOIgual,opMasIgual,opMenosIgual,opMulIgual,
         opDivIgual,opExponenteIgual,opDivEnteraIgual,opParentesis1,opParentesis2,opComa,opPunto,opShiftDerecho,opShiftIzquierdo,
         opANDLog,opORLog,opNOTLog,opANDBits,opORBits,opXOR,opNOTBits,opTAB,*/
-        opAritmeticos,opComparadores,opAsingaciones,opDelimitadores,opBits,opLogicos,
+        opAritmeticos,opComparadores,opAsignaciones,opDelimitadores,opBits,opLogicos,
         
     //Palabras reservadas(en orden igual)
         /*rAnd,rAssert,rBreak,rClass,rContinue,rDef,rDel,rElif,rElse,rExcept,rExec,rFinally,rFor,rFrom,

@@ -36,6 +36,15 @@ Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
+PalabraRerservada = ("assert"|"break"|"class"|"continue"|"def"|"del"|"elif"|"else"|"except"|"exec"|"finally"|"for"|"from"|"global"|"if"|"import"|"in"|"is"|"lambda"|"pass"|"print"|"raise"|"return"|"try"|"while"|"int"|"float"|"string"|"list"|"bool")
+
+opAritmeticos = "+"|"-"|"*"|"/"|"//"|"%"|"**"
+opComparadores = "=="|"!="|"<>"|">"|"<"|">="|"<="
+opLogicos = "and"|"or"|"not"
+opBits = ">>"|"<<"|"&"|"^"|"~"|\u007C
+opAsignaciones = "+="|"-="|"*="|"/="|"**="|"//="|"="
+opDelimitadores ="("|")"|"[""]"|","|"."|":"|"\t"
+
 %%
 /* Comentarios y espacios en blanco son ignorados */
 
@@ -56,78 +65,15 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
 
 /* Operadores */
-
-"+" {lexeme = yytext(); return opAritmeticos;}
-"-" {lexeme = yytext(); return opAritmeticos;}
-"*" {lexeme = yytext(); return opAritmeticos;}
-"/" {lexeme = yytext(); return opAritmeticos;}
-"//" {lexeme = yytext(); return opAritmeticos;}
-"%" {lexeme = yytext(); return opAritmeticos;}
-"**" {lexeme = yytext(); return opAritmeticos;}
-"=" {lexeme = yytext(); return opAsingaciones;}
-"==" {lexeme = yytext(); return opComparadores;}
-"!=" {lexeme = yytext(); return opComparadores;}
-"<>" {lexeme = yytext(); return opComparadores;}
-">" {lexeme = yytext(); return opComparadores;}
-"<" {lexeme = yytext(); return opComparadores;}
-">=" {lexeme = yytext(); return opComparadores;}
-"<=" {lexeme = yytext(); return opComparadores;}
-"+=" {lexeme = yytext(); return opAsingaciones;}
-"-=" {lexeme = yytext(); return opAsingaciones;}
-"*=" {lexeme = yytext(); return opAsingaciones;}
-"/=" {lexeme = yytext(); return opAsingaciones;}
-"**=" {lexeme = yytext(); return opAsingaciones;}
-"//=" {lexeme = yytext(); return opAsingaciones;}
-"(" {lexeme = yytext(); return opDelimitadores;}
-")" {lexeme = yytext(); return opDelimitadores;}
-"[" {lexeme = yytext(); return opDelimitadores;}
-"]" {lexeme = yytext(); return opDelimitadores;}
-"," {lexeme = yytext(); return opDelimitadores;}
-"." {lexeme = yytext(); return opDelimitadores;}
-":" {lexeme = yytext(); return opDelimitadores;}
-">>" {lexeme = yytext(); return opBits;}
-"<<" {lexeme = yytext(); return opBits;}
-"and" {lexeme = yytext(); return opLogicos;}
-"or" {lexeme = yytext(); return opLogicos;}
-"not" {lexeme = yytext(); return opLogicos;}
-"&" {lexeme = yytext(); return opBits;}
-"^" {lexeme = yytext(); return opBits;}
-"~" {lexeme = yytext(); return opBits;}
-\u007C {lexeme=yytext(); return opBits;}
-"\t" {lexeme = yytext(); return opDelimitadores;}
+{opAritmeticos} {lexeme = yytext(); return opAritmeticos;}
+{opComparadores} {lexeme = yytext(); return opComparadores ;}
+{opLogicos} {lexeme = yytext(); return opLogicos;}
+{opBits} {lexeme = yytext(); return opBits;}
+{opAsignaciones} {lexeme = yytext(); return opAsignaciones;}
+{opDelimitadores} {lexeme = yytext(); return opDelimitadores;}
 
 /* Palabras reservadas */
-"assert" {lexeme = yytext(); return PalabraReservada;}
-"break" {lexeme = yytext(); return PalabraReservada;}
-"class" {lexeme = yytext(); return PalabraReservada;}
-"continue" {lexeme = yytext(); return PalabraReservada;}
-"def" {lexeme = yytext(); return PalabraReservada;}
-"del" {lexeme = yytext(); return PalabraReservada;}
-"elif" {lexeme = yytext(); return PalabraReservada;}
-"else" {lexeme = yytext(); return PalabraReservada;}
-"except" {lexeme = yytext(); return PalabraReservada;}
-"exec" {lexeme = yytext(); return PalabraReservada;}
-"finally" {lexeme = yytext(); return PalabraReservada;}
-"for" {lexeme = yytext(); return PalabraReservada;}
-"from" {lexeme = yytext(); return PalabraReservada;}
-"global" {lexeme = yytext(); return PalabraReservada;}
-"if" {lexeme = yytext(); return PalabraReservada;}
-"import" {lexeme = yytext(); return PalabraReservada;}
-"in" {lexeme = yytext(); return PalabraReservada;}
-"is" {lexeme = yytext(); return PalabraReservada;}
-"lambda" {lexeme = yytext(); return PalabraReservada;}
-"pass" {lexeme = yytext(); return PalabraReservada;}
-"print" {lexeme = yytext(); return PalabraReservada;}
-"raise" {lexeme = yytext(); return PalabraReservada;}
-"return" {lexeme = yytext(); return PalabraReservada;}
-"try" {lexeme = yytext(); return PalabraReservada;}
-"while" {lexeme = yytext(); return PalabraReservada;}
-"int" {lexeme = yytext(); return PalabraReservada;}
-
-"float" {lexeme = yytext(); return PalabraReservada;}
-"string" {lexeme = yytext(); return PalabraReservada;}
-"list" {lexeme = yytext(); return PalabraReservada;}
-"bool" {lexeme = yytext(); return PalabraReservada;}
+{PalabraRerservada} {lexeme = yytext(); return PalabraReservada;}
 
 {Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme="string"+yytext(); return ERROR;} 
 {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;}
