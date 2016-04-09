@@ -34,7 +34,7 @@ public class ScannerController {
             else{
                 switch(currentToken){
                     case ERROR:
-                        String error = "Error : " + lexer.lexeme + ".";
+                        String error = "Error : " + lexer.lexeme + ". En la línea: " + (lexer.getLine()+1);
                         errores.add(error);
                         break;
                     default:

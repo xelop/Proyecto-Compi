@@ -30,7 +30,7 @@ Hexadecimal = ([0-9]|[a-f])
 WhiteSpace = {LineTerminator} | [ ]
 LineTerminator = (\r\n|\r|\n)
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
-IdentificadorInvalido = ([^A-Za-z\r\n_0-9])
+IdentificadorInvalido = ([^A-Za-z\r\n_0-9 ])
 
 Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
@@ -53,82 +53,84 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
  \' {string.setLength(0); yybegin(MYCHAR);} 
 
- \u007C {lexeme=yytext(); return opORBits;}
+
 
 /* Operadores */
 
-
-"+" {lexeme = yytext(); return opSuma;}
-"-" {lexeme = yytext(); return opResta;}
-"*" {lexeme = yytext(); return opMult;}
-"/" {lexeme = yytext(); return opDiv;}
-"//" {lexeme = yytext(); return opDivEntera;}
-"%" {lexeme = yytext(); return opMod;}
-"**" {lexeme = yytext(); return opExponente;}
-"=" {lexeme = yytext(); return opIgual;}
-"==" {lexeme = yytext(); return opExactamenteIgual;}
-"!=" {lexeme = yytext(); return opDiferencia;}
-"<>" {lexeme = yytext(); return opDiferencia2;}
-">" {lexeme = yytext(); return opMayorQue;}
-"<" {lexeme = yytext(); return opMenorQue;}
-">=" {lexeme = yytext(); return opMayorOIgual;}
-"<=" {lexeme = yytext(); return opMenorOIgual;}
-"+=" {lexeme = yytext(); return opMasIgual;}
-"-=" {lexeme = yytext(); return opMenosIgual;}
-"*=" {lexeme = yytext(); return opMulIgual;}
-"/=" {lexeme = yytext(); return opDivIgual;}
-"**=" {lexeme = yytext(); return opExponenteIgual;}
-"//=" {lexeme = yytext(); return opDivEnteraIgual;}
-"(" {lexeme = yytext(); return opParentesis1;}
-")" {lexeme = yytext(); return opParentesis2;}
-"," {lexeme = yytext(); return opComa;}
-"." {lexeme = yytext(); return opPunto;}
-">>" {lexeme = yytext(); return opShiftDerecho;}
-"<<" {lexeme = yytext(); return opShiftIzquierdo;}
-"and" {lexeme = yytext(); return opANDLog;}
-"or" {lexeme = yytext(); return opORLog;}
-"nor" {lexeme = yytext(); return opNOTLog;}
-"&" {lexeme = yytext(); return opANDBits;}
-"^" {lexeme = yytext(); return opXOR;}
-"~" {lexeme = yytext(); return opNOTBits;}
-"\t" {lexeme = yytext(); return opTAB;}
+"+" {lexeme = yytext(); return opAritmeticos;}
+"-" {lexeme = yytext(); return opAritmeticos;}
+"*" {lexeme = yytext(); return opAritmeticos;}
+"/" {lexeme = yytext(); return opAritmeticos;}
+"//" {lexeme = yytext(); return opAritmeticos;}
+"%" {lexeme = yytext(); return opAritmeticos;}
+"**" {lexeme = yytext(); return opAritmeticos;}
+"=" {lexeme = yytext(); return opAsingaciones;}
+"==" {lexeme = yytext(); return opComparadores;}
+"!=" {lexeme = yytext(); return opComparadores;}
+"<>" {lexeme = yytext(); return opComparadores;}
+">" {lexeme = yytext(); return opComparadores;}
+"<" {lexeme = yytext(); return opComparadores;}
+">=" {lexeme = yytext(); return opComparadores;}
+"<=" {lexeme = yytext(); return opComparadores;}
+"+=" {lexeme = yytext(); return opAsingaciones;}
+"-=" {lexeme = yytext(); return opAsingaciones;}
+"*=" {lexeme = yytext(); return opAsingaciones;}
+"/=" {lexeme = yytext(); return opAsingaciones;}
+"**=" {lexeme = yytext(); return opAsingaciones;}
+"//=" {lexeme = yytext(); return opAsingaciones;}
+"(" {lexeme = yytext(); return opDelimitadores;}
+")" {lexeme = yytext(); return opDelimitadores;}
+"[" {lexeme = yytext(); return opDelimitadores;}
+"]" {lexeme = yytext(); return opDelimitadores;}
+"," {lexeme = yytext(); return opDelimitadores;}
+"." {lexeme = yytext(); return opDelimitadores;}
+":" {lexeme = yytext(); return opDelimitadores;}
+">>" {lexeme = yytext(); return opBits;}
+"<<" {lexeme = yytext(); return opBits;}
+"and" {lexeme = yytext(); return opLogicos;}
+"or" {lexeme = yytext(); return opLogicos;}
+"not" {lexeme = yytext(); return opLogicos;}
+"&" {lexeme = yytext(); return opBits;}
+"^" {lexeme = yytext(); return opBits;}
+"~" {lexeme = yytext(); return opBits;}
+\u007C {lexeme=yytext(); return opBits;}
+"\t" {lexeme = yytext(); return opDelimitadores;}
 
 /* Palabras reservadas */
-/*"AND" {lexeme = yytext(); return rAnd;}
-"OR" {lexeme = yytext(); return rOr;}
-"NOT" {lexeme = yytext(); return rNot;} Estos hay que preguntar*/
-"assert" {lexeme = yytext(); return rAssert;}
-"break" {lexeme = yytext(); return rBreak;}
-"class" {lexeme = yytext(); return rClass;}
-"continue" {lexeme = yytext(); return rContinue;}
-"def" {lexeme = yytext(); return rDel;}
-"del" {lexeme = yytext(); return rDel;}
-"elif" {lexeme = yytext(); return rElif;}
-"else" {lexeme = yytext(); return rElse;}
-"except" {lexeme = yytext(); return rExcept;}
-"exec" {lexeme = yytext(); return rExec;}
-"finally" {lexeme = yytext(); return rFinally;}
-"for" {lexeme = yytext(); return rFor;}
-"from" {lexeme = yytext(); return rFrom;}
-"global" {lexeme = yytext(); return rGlobal;}
-"if" {lexeme = yytext(); return rIf;}
-"import" {lexeme = yytext(); return rImport;}
-"in" {lexeme = yytext(); return rIn;}
-"is" {lexeme = yytext(); return rIs;}
-"lambda" {lexeme = yytext(); return rLambda;}
-"pass" {lexeme = yytext(); return rPass;}
-"print" {lexeme = yytext(); return rPrint;}
-"raise" {lexeme = yytext(); return rRaise;}
-"return" {lexeme = yytext(); return rReturn;}
-"try" {lexeme = yytext(); return rTry;}
-"while" {lexeme = yytext(); return rWhile;}
-"int" {lexeme = yytext(); return rInt;}
-"float" {lexeme = yytext(); return rFloat;}
-"string" {lexeme = yytext(); return rString;}
-"list" {lexeme = yytext(); return rList;}
-"bool" {lexeme = yytext(); return rBool;}
-{Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme="string"+yytext(); return ERROR;} /* hay que arregalarla */
-{Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
+"assert" {lexeme = yytext(); return PalabraReservada;}
+"break" {lexeme = yytext(); return PalabraReservada;}
+"class" {lexeme = yytext(); return PalabraReservada;}
+"continue" {lexeme = yytext(); return PalabraReservada;}
+"def" {lexeme = yytext(); return PalabraReservada;}
+"del" {lexeme = yytext(); return PalabraReservada;}
+"elif" {lexeme = yytext(); return PalabraReservada;}
+"else" {lexeme = yytext(); return PalabraReservada;}
+"except" {lexeme = yytext(); return PalabraReservada;}
+"exec" {lexeme = yytext(); return PalabraReservada;}
+"finally" {lexeme = yytext(); return PalabraReservada;}
+"for" {lexeme = yytext(); return PalabraReservada;}
+"from" {lexeme = yytext(); return PalabraReservada;}
+"global" {lexeme = yytext(); return PalabraReservada;}
+"if" {lexeme = yytext(); return PalabraReservada;}
+"import" {lexeme = yytext(); return PalabraReservada;}
+"in" {lexeme = yytext(); return PalabraReservada;}
+"is" {lexeme = yytext(); return PalabraReservada;}
+"lambda" {lexeme = yytext(); return PalabraReservada;}
+"pass" {lexeme = yytext(); return PalabraReservada;}
+"print" {lexeme = yytext(); return PalabraReservada;}
+"raise" {lexeme = yytext(); return PalabraReservada;}
+"return" {lexeme = yytext(); return PalabraReservada;}
+"try" {lexeme = yytext(); return PalabraReservada;}
+"while" {lexeme = yytext(); return PalabraReservada;}
+"int" {lexeme = yytext(); return PalabraReservada;}
+
+"float" {lexeme = yytext(); return PalabraReservada;}
+"string" {lexeme = yytext(); return PalabraReservada;}
+"list" {lexeme = yytext(); return PalabraReservada;}
+"bool" {lexeme = yytext(); return PalabraReservada;}
+
+{Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme="string"+yytext(); return ERROR;} 
+{Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;}
 
 }
 
