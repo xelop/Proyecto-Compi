@@ -23,13 +23,14 @@ import static lexer.Token.*;
 
 Letra = [a-zA-Z_]
 Numero = [0-9]
-Binario = [0|1]
+Binario = (0|1)
 Octal = [0-7]
 Operador = [+,-] /*No se si tener todos los valores de operador servira para arreglar el ER de identificador */
-Hexadecimal = [0-9|a-f]
+Hexadecimal = ([0-9]|[a-f])
 WhiteSpace = {LineTerminator} | [ ]
 LineTerminator = (\r\n|\r|\n)
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
+IdentificadorInvalido = ([^A-Za-z\r\n_0-9])
 
 Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
@@ -126,6 +127,7 @@ ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 "string" {lexeme = yytext(); return rString;}
 "list" {lexeme = yytext(); return rList;}
 "bool" {lexeme = yytext(); return rBool;}
+{Letra}(({Letra}|{Numero})*({IdentificadorInvalido})+({Letra}|{Numero})*)+ {lexeme="string"+yytext(); return ERROR;} /* hay que arregalarla */
 {Letra}({Letra}|{Numero})* {lexeme=yytext(); return Identificador;} /* hay que arregalarla */
 
 }
