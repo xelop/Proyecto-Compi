@@ -1,12 +1,9 @@
-+ - * / // % ** +
-= += -= *= /= **= //=
-== != <> < > <= >= 
-( ) , . : 	
->> << | & ~ ^
-and or not
+#este es un comentario de línea
+expresion = 4 + 5
+"""este comentario esta correctamente cerrado"""
+"""hola 
+como !"#$% 12341234 		 " " "" " 
+estas
+	este comentario no esta correctamente cerrado
+""
 
-$ @
-
-break for while
-HELLO=5+MAÑÁNA
-assert break mañana

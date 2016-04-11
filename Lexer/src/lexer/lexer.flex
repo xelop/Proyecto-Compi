@@ -8,6 +8,7 @@ import static lexer.Token.*;
 %column
 %state MYSTRING
 %state MYCHAR
+%state COMENTARIOBLOQUE
 
 %{
     //esto se copia directamente
@@ -32,7 +33,7 @@ LineTerminator = (\r\n|\r|\n)
 InputCharacter = [^\r\n] /* todos los caracteres que no son el enter */
 IdentificadorInvalido = ([^\x00-\x7F])
 
-Comentario = {ComentarioDeLinea}|{ComentarioDeBloque}
+Comentario = {ComentarioDeLinea}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
@@ -43,19 +44,20 @@ opComparadores = "=="|"!="|"<>"|">"|"<"|">="|"<="
 opLogicos = "and"|"or"|"not"
 opBits = ">>"|"<<"|"&"|"^"|"~"|\u007C
 opAsignaciones = "+="|"-="|"*="|"/="|"**="|"//="|"="
-opDelimitadores ="("|")"|"[""]"|","|"."|":"|"\t"
+opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"
 
 %%
 /* Comentarios y espacios en blanco son ignorados */
 
 
 <YYINITIAL> {
+ \"\"\"                         { string.setLength(0); yybegin(COMENTARIOBLOQUE);}
  \"                             { string.setLength(0); cambioLinea = false; yybegin(MYSTRING); }
- {WhiteSpace} {/* ignore */}
- {Comentario} {/* ignore */}
- 0("b"|"B"){Binario}+ {lexeme=yytext(); return INT;}
- 0("o"|"O"){Octal}+  {lexeme=yytext(); return INT;}
- 0("x"|"X"){Hexadecimal}+  {lexeme=yytext(); return INT;}
+ {WhiteSpace}                   {/* ignore */}
+ {Comentario}                   {/* ignore */}
+ 0("b"|"B")                     {Binario}+ {lexeme=yytext(); return INT;}
+ 0("o"|"O")                     {Octal}+  {lexeme=yytext(); return INT;}
+ 0("x"|"X")                     {Hexadecimal}+  {lexeme=yytext(); return INT;}
  {Numero}+({Letra}+{Numero}*)+ {lexeme = yytext(); return ERROR;}
  {Numero}+ {lexeme=yytext(); return INT;}
  ({Numero}+"."{Numero}+) {lexeme=yytext(); return FLOAT;}
@@ -65,12 +67,12 @@ opDelimitadores ="("|")"|"[""]"|","|"."|":"|"\t"
 
 
 /* Operadores */
-{opAritmeticos} {lexeme = yytext(); return opAritmeticos;}
-{opComparadores} {lexeme = yytext(); return opComparadores ;}
-{opLogicos} {lexeme = yytext(); return opLogicos;}
-{opBits} {lexeme = yytext(); return opBits;}
-{opAsignaciones} {lexeme = yytext(); return opAsignaciones;}
-{opDelimitadores} {lexeme = yytext(); return opDelimitadores;}
+{opAritmeticos}     {lexeme = yytext(); return opAritmeticos;}
+{opComparadores}    {lexeme = yytext(); return opComparadores ;}
+{opLogicos}         {lexeme = yytext(); return opLogicos;}
+{opBits}            {lexeme = yytext(); return opBits;}
+{opAsignaciones}    {lexeme = yytext(); return opAsignaciones;}
+{opDelimitadores}   {lexeme = yytext(); return opDelimitadores;}
 
 /* Palabras reservadas */
 {PalabraRerservada} {lexeme = yytext(); return PalabraReservada;}
@@ -102,13 +104,26 @@ opDelimitadores ="("|")"|"[""]"|","|"."|":"|"\t"
                                         return STRING;
                                    }} /*Numero linea = adonde terminO*/
  \S                   { string.append( yytext() ); }
-<<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
+ <<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
 
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
 
+}
+
+<COMENTARIOBLOQUE> {
+  \"\"\"                           { yybegin(YYINITIAL); System.out.println(string.toString());}
+  \S                               { string.append( yytext() ); }
+  <<EOF>>                          { yybegin(YYINITIAL); lexeme = "Comentario de bloque sin terminar: " + "\"\"\"" + string.toString(); return ERROR;}
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  [ ]                              { string.append(' '); }
+  {LineTerminator}                 { string.append(yytext()); }
+  \s                               { string.append(yytext()); }
 }
 
 
