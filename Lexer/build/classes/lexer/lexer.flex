@@ -44,7 +44,7 @@ opComparadores = "=="|"!="|"<>"|">"|"<"|">="|"<="
 opLogicos = "and"|"or"|"not"
 opBits = ">>"|"<<"|"&"|"^"|"~"|\u007C
 opAsignaciones = "+="|"-="|"*="|"/="|"**="|"//="|"="
-opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"
+opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"|"{"|"}"
 
 %%
 /* Comentarios y espacios en blanco son ignorados */
@@ -91,11 +91,12 @@ opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"
                                     return CHAR;   }
 <<EOF>>                          { yybegin(YYINITIAL); lexeme = "Char sin terminar: " + string.toString(); return ERROR;}
 \S                               { string.append( yytext() );}
+\s                               { string.append( yytext() );}
 
 
 }
 <MYSTRING> {
-  {LineTerminator}               { cambioLinea = true;}
+  {LineTerminator}               { cambioLinea = true; string.append('\n');}
   \"                             { yybegin(YYINITIAL);
                                    lexeme = "\"" +string.toString()+"\"";
                                    if(cambioLinea){
@@ -103,13 +104,14 @@ opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"
                                    }else{
                                         return STRING;
                                    }} /*Numero linea = adonde terminO*/
- \S                   { string.append( yytext() ); }
- <<EOF>>                          { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
-
+ <<EOF>>                         { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
+  \t                            { string.append('\t'); } 
+  \u0020                         {string.append(' ');}
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
+  \S                             { string.append( yytext() ); }
 
 }
 
