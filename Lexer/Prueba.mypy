@@ -1,10 +1,2275 @@
-"hola2+"
-"hela"
-"he+l
-a"
-'h'
-"	hola mundo \t yes"
-'h s'
+from tkinter import*
+import random
 
-'h
-' 
+""" Esta funcion tendra de entrada a una lista, y a un elemento; y me dirá si en la lista el elemento esta incluido, y en tal caso me dirá el indice en que se encuentra"""
+def findAux(lis, elem, cont):
+    if lis==[]:
+        return 0
+    elif lis[0] == elem:
+        return cont
+    else:
+        return findAux( lis[1:], elem, cont+1)
+    
+
+def find(lis, elem):
+    return findAux(lis, elem, 0)
+
+"""
+La función de esta función es la de convertir todas las palabras en BDPalabras.txt, en una sola lista.
+Entradas: Una lista vacía llamada lstPalabras y el BDPalabras.text en sí.
+Restricciones: No las hay.
+"""
+
+def leerArchivo(palabras,lstPalabras):
+    linea=palabras.readline()
+    if linea=="":
+        palabras.close()
+        return lstPalabras
+    else:
+        lstPalabras.append(linea[:len(linea)-1])
+        return leerArchivo(palabras,lstPalabras)
+palabras=open("BDPalabras.txt","r")
+lstPalabras=[]
+lstPalabras=leerArchivo(palabras,lstPalabras)
+
+#Segunda ventana, le dará al usuario que seleccione o le seleccionen la palabra con la que jugará, por medio de un radiobutton.
+from tkinter import*
+ventana2= Tk()
+ventana2.withdraw()
+ventana2.title("Ahorcado")
+ventana2.geometry("500x380+100+0")
+ventana2.resizable(width=FALSE , height=FALSE)
+lblEscogencia=Label(ventana2,text="Escoge la cantidad de palabras con la que queras jugar:",font=("Agency FB",15)).place(x=20,y=50)
+selec=IntVar()
+rbtnEscogencia1=Radiobutton(ventana2,text="Cuatro letras.",font=("Agency FB",14),value=1,variable=selec).place(x=370,y=50)
+rbtnEscogencia2=Radiobutton(ventana2,text="Cinco letras.",font=("Agency FB",14),value=2,variable=selec).place(x=370,y=80)
+rbtnEscogencia3=Radiobutton(ventana2,text="Seis letras.",font=("Agency FB",14),value=3,variable=selec).place(x=370,y=110)
+rbtnEscogencia4=Radiobutton(ventana2,text="Siete letras.",font=("Agency FB",14),value=4,variable=selec).place(x=370,y=140)
+rbtnEscogencia5=Radiobutton(ventana2,text="Ocho letras.",font=("Agency FB",14),value=5,variable=selec).place(x=370,y=170)
+rbtnEscogencia6=Radiobutton(ventana2,text="Nueve letras.",font=("Agency FB",14),value=6,variable=selec).place(x=370,y=200)
+rbtnEscogencia7=Radiobutton(ventana2,text="Diez letras.",font=("Agency FB",14),value=7,variable=selec).place(x=370,y=230)
+rbtnEscogencia8=Radiobutton(ventana2,text="Aleatorio.",font=("Agency FB",14),value=8,variable=selec).place(x=370,y=260)
+
+#Tercera ventana, aquí ocurrirá el juego. Saldran los espacios de las letras, las letras que se podrán seleccionar, los TIPS, e imagnes mostrando el estado de cuantos intentos quedan,
+
+ventana3= Tk()
+ventana3.title("Ahorcado")
+ventana3.resizable(width=FALSE , height=FALSE)
+ventana3.geometry("1100x550+100+0")
+ventana3.withdraw()
+""" Esta funcion ocurrirá al presionar el botón de CERRAR. Su función es destruir la ventana3. No hay salidas ni entradas ni restricciones."""
+def cierraVentana3():
+    ventana3.destroy()
+
+btnCerrar=Button(ventana3,text="CERRAR",command=cierraVentana3).place(x=900,y=500)
+""" Esta función tiene de entrada a C, que es un contador que me lleva la cuenta de los intentos restantes. Esta funcion , de acuerdo con el contador, me mostrará la imagen actual del muñeco de palitos.
+no hay restricciones."""
+def imagen(C):
+    print("llego")
+    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+    lblIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+    ventana3.mainloop()
+
+#parte de la segunda ventana
+"""Este funcion me esconderá a la ventana 2 y volverá a aparecer la ventana 1. No tiene ni entradas ni salidas ni restricciones."""
+def vuelveVentana1():
+    ventana2.withdraw()
+    ventana1.deiconify()
+""" Esta función tendrá de entrada a S (entero con el número de letras de las palabras) a C (entero,serán los intentos establecidos), a p que será la palabra seleccionada por el programa,
+y a pl, que seráuna lista que contiene las las letras de la palabra con la que se esta jugando.Además me enseñará la ventana 3 de acuerdo a la palabra escogida, y con todos los botones incorporados. No hay restricciones."""
+def abreVentana3AUX2(s,C,p,pl):
+    if len(p)==s:
+        print(p)
+        print(pl)
+        ventana3.deiconify()
+        lblLineas=Label(ventana3,text="_______    "*s).place(x=170,y=100)
+        lblIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+        img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+        lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+        """Esta función se activará al apretar el botón "A". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verAAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("A")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("A")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("A")==1:
+                    if "A"==pl[0]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "A"==pl[1]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "A"==pl[2]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "A"==pl[3]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "A"==pl[4]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "A"==pl[5]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "A"==pl[6]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "A"==pl[7]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "A"==pl[8]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "A"==pl[9]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    C.insert(0,str(int(C[0])+1))
+                    pl.insert(find(pl,"A")," ")
+                    pl.remove("A")
+                    btnA=Button(ventana3,text="A",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=150,y=200)
+                    return verAAUX(C,p,pl)
+                else:
+                    if "A"==pl[0]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "A"==pl[1]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "A"==pl[2]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "A"==pl[3]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "A"==pl[4]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "A"==pl[5]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "A"==pl[6]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "A"==pl[7]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "A"==pl[8]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "A"==pl[9]:
+                         labelA=Label(ventana3,text="A",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"A")," ")
+                    pl.remove("A")
+                    return verAAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verAAUX(C,p,pl)        
+        def verA(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verAAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "M". De entradas tiene a pl que es una lista de las letras que contiene la palabra; a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verMAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("M")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("M")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("M")==1:
+                    if "M"==pl[0]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "M"==pl[1]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "M"==pl[2]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "M"==pl[3]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "M"==pl[4]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "M"==pl[5]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "M"==pl[6]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "M"==pl[7]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=505,y=70)
+                    if "M"==pl[8]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=555,y=70)
+                    if "M"==pl[9]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    C.insert(0,str(int(C[0])+1))
+                    pl.insert(find(pl,"M")," ")
+                    pl.remove("M")
+                    btnM=Button(ventana3,text="M",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=300,y=270)
+                    return verMAUX(C,p,pl)
+                else:
+                    if "M"==pl[0]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "M"==pl[1]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "M"==pl[2]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "M"==pl[3]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "M"==pl[4]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "M"==pl[5]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "M"==pl[6]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "M"==pl[7]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=505,y=70)
+                    if "M"==pl[8]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=555,y=70)
+                    if "M"==pl[9]:
+                         labelM=Label(ventana3,text="M",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"M")," ")
+                    pl.remove("M")
+                    return verMAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verMAUX(C,p,pl)        
+        def verM(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verMAUX(C,p,pl)
+        
+        """Esta función se activará al apretar el botón "P". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verPAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("P")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("P")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("P")==1:
+                    if "P"==pl[0]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "P"==pl[1]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "P"==pl[2]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "P"==pl[3]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "P"==pl[4]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=370,y=70)
+                    if "P"==pl[5]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "P"==pl[6]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "P"==pl[7]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "P"==pl[8]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=565,y=70)
+                    if "P"==pl[9]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    C.insert(0,str(int(C[0])+1))
+                    pl.insert(find(pl,"P")," ")
+                    pl.remove("P")
+                    btnP=Button(ventana3,text="P",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=500,y=270)
+                    return verPAUX(C,p,pl)
+                else:
+                    if "P"==pl[0]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "P"==pl[1]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "P"==pl[2]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "P"==pl[3]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "P"==pl[4]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=370,y=70)
+                    if "P"==pl[5]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "P"==pl[6]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "P"==pl[7]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "P"==pl[8]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=565,y=70)
+                    if "P"==pl[9]:
+                         labelP=Label(ventana3,text="P",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"P")," ")
+                    pl.remove("P")
+                    return verPAUX(C,p,pl)      
+            else:
+                pl.append(" ")
+                return verPAUX(C,p,pl)        
+        def verP(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verPAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "B". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verBAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("B")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("B")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("B")==1:
+                    if "B"==pl[0]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "B"==pl[1]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "B"==pl[2]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "B"==pl[3]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "B"==pl[4]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=370,y=70)
+                    if "B"==pl[5]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "B"==pl[6]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=470,y=70)
+                    if "B"==pl[7]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "B"==pl[8]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=565,y=70)
+                    if "B"==pl[9]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"B")," ")
+                    pl.remove("B")
+                    C.insert(0,str(int(C[0])+1))
+                    btnB=Button(ventana3,text="B",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=200,y=200)
+                    return verBAUX(C,p,pl)
+                else:
+                    if "B"==pl[0]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "B"==pl[1]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "B"==pl[2]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "B"==pl[3]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "B"==pl[4]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=370,y=70)
+                    if "B"==pl[5]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "B"==pl[6]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=470,y=70)
+                    if "B"==pl[7]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "B"==pl[8]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=565,y=70)
+                    if "B"==pl[9]:
+                         labelB=Label(ventana3,text="B",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"B")," ")
+                    pl.remove("B")
+                    return verBAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verBAUX(C,p,pl)
+        def verB(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verBAUX(C,p,pl)
+        
+        """Esta función se activará al apretar el botón "D". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verDAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("D")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("D")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("D")==1:
+                    if "D"==pl[0]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "D"==pl[1]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "D"==pl[2]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "D"==pl[3]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "D"==pl[4]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "D"==pl[5]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "D"==pl[6]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "D"==pl[7]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "D"==pl[8]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "D"==pl[9]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"D")," ")
+                    pl.remove("D")
+                    C.insert(0,str(int(C[0])+1))
+                    btnD=Button(ventana3,text="D",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=300,y=200)
+                    return verDAUX(C,p,pl)
+                else:
+                    if "D"==pl[0]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "D"==pl[1]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "D"==pl[2]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "D"==pl[3]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "D"==pl[4]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "D"==pl[5]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "D"==pl[6]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "D"==pl[7]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "D"==pl[8]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "D"==pl[9]:
+                         labelD=Label(ventana3,text="D",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"D")," ")
+                    pl.remove("D")
+                    return verDAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verDAUX(C,p,pl)
+        def verD(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verDAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "C". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verCAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("C")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("C")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("C")==1:
+                    if "C"==pl[0]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "C"==pl[1]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "C"==pl[2]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "C"==pl[3]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "C"==pl[4]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "C"==pl[5]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "C"==pl[6]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "C"==pl[7]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "C"==pl[8]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "C"==pl[9]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"C")," ")
+                    pl.remove("C")
+                    C.insert(0,str(int(C[0])+1))
+                    btnC=Button(ventana3,text="C",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=250,y=200)
+                    return verCAUX(C,p,pl)
+                else:
+                    if "C"==pl[0]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "C"==pl[1]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "C"==pl[2]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "C"==pl[3]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "C"==pl[4]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "C"==pl[5]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "C"==pl[6]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "C"==pl[7]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "C"==pl[8]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "C"==pl[9]:
+                         labelA=Label(ventana3,text="C",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"C")," ")
+                    pl.remove("C")
+                    return verCAUX(C,p,pl) 
+            else:
+                pl.append(" ")
+                return verCAUX(C,p,pl)        
+        def verC(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verCAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "E". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verEAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("E")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("E")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("E")==1:
+                    if "E"==pl[0]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "E"==pl[1]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "E"==pl[2]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "E"==pl[3]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "E"==pl[4]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "E"==pl[5]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "E"==pl[6]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "E"==pl[7]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "E"==pl[8]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "E"==pl[9]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"E")," ")
+                    pl.remove("E")
+                    C.insert(0,str(int(C[0])+1))
+                    btnE=Button(ventana3,text="E",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=350,y=200)
+                    return verEAUX(C,p,pl)
+                else:
+                    if "E"==pl[0]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "E"==pl[1]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "E"==pl[2]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "E"==pl[3]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "E"==pl[4]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "E"==pl[5]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "E"==pl[6]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "E"==pl[7]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "E"==pl[8]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "E"==pl[9]:
+                         labelE=Label(ventana3,text="E",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"E")," ")
+                    pl.remove("E")
+                    return verEAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verEAUX(C,p,pl)        
+        def verE(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verEAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "F". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verFAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("F")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("F")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("F")==1:
+                    if "F"==pl[0]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "F"==pl[1]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "F"==pl[2]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "F"==pl[3]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "F"==pl[4]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "F"==pl[5]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "F"==pl[6]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "F"==pl[7]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "F"==pl[8]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "F"==pl[9]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"F")," ")
+                    pl.remove("F")
+                    C.insert(0,str(int(C[0])+1))
+                    btnF=Button(ventana3,text="F",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=400,y=200)
+                    return verFAUX(C,p,pl)
+                else:
+                    if "F"==pl[0]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "F"==pl[1]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "F"==pl[2]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "F"==pl[3]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "F"==pl[4]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "F"==pl[5]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "F"==pl[6]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "F"==pl[7]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "F"==pl[8]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "F"==pl[9]:
+                         labelF=Label(ventana3,text="F",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"F")," ")
+                    pl.remove("F")
+                    return verFAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verFAUX(C,p,pl)        
+        def verF(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verFAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "G". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verGAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("G")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("G")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("G")==1:
+                    if "G"==pl[0]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "G"==pl[1]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "G"==pl[2]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "G"==pl[3]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "G"==pl[4]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "G"==pl[5]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "G"==pl[6]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "G"==pl[7]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "G"==pl[8]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "G"==pl[9]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"G")," ")
+                    pl.remove("G")
+                    C.insert(0,str(int(C[0])+1))
+                    btnG=Button(ventana3,text="G",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=450,y=200)
+                    return verGAUX(C,p,pl)
+                else:
+                    if "G"==pl[0]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "G"==pl[1]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "G"==pl[2]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "G"==pl[3]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "G"==pl[4]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "G"==pl[5]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "G"==pl[6]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "G"==pl[7]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "G"==pl[8]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "G"==pl[9]:
+                         labelG=Label(ventana3,text="G",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"G")," ")
+                    pl.remove("G")
+                    return verGAUX(C,p,pl)                    
+            else:
+                pl.append(" ")
+                return verGAUX(C,p,pl)        
+        def verG(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verGAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "H". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verHAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("H")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("H")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("H")==1:
+                    if "H"==pl[0]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "H"==pl[1]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "H"==pl[2]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "H"==pl[3]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "H"==pl[4]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "H"==pl[5]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "H"==pl[6]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "H"==pl[7]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "H"==pl[8]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "H"==pl[9]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"H")," ")
+                    pl.remove("H")
+                    C.insert(0,str(int(C[0])+1))
+                    btnH=Button(ventana3,text="H",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=500,y=200)
+                    return verHAUX(C,p,pl)
+                else:
+                    if "H"==pl[0]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "H"==pl[1]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "H"==pl[2]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "H"==pl[3]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "H"==pl[4]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "H"==pl[5]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "H"==pl[6]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "H"==pl[7]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "H"==pl[8]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "H"==pl[9]:
+                         labelH=Label(ventana3,text="H",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"H")," ")
+                    pl.remove("H")
+                    return verHAUX(C,p,pl)      
+            else:
+                pl.append(" ")
+                return verHAUX(C,p,pl)        
+        def verH(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verHAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "I". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verIAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("I")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("I")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("I")==1:
+                    if "I"==pl[0]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "I"==pl[1]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "I"==pl[2]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "I"==pl[3]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "I"==pl[4]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "I"==pl[5]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "I"==pl[6]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "I"==pl[7]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "I"==pl[8]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "I"==pl[9]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"I")," ")
+                    pl.remove("I")
+                    C.insert(0,str(int(C[0])+1))
+                    btnI=Button(ventana3,text="I",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=550,y=200)
+                    return verIAUX(C,p,pl)
+                else:
+                    if "I"==pl[0]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "I"==pl[1]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "I"==pl[2]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "I"==pl[3]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "I"==pl[4]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "I"==pl[5]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "I"==pl[6]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "I"==pl[7]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "I"==pl[8]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "I"==pl[9]:
+                         labelI=Label(ventana3,text="I",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"I")," ")
+                    pl.remove("I")
+                    return verIAUX(C,p,pl)
+            else:
+                pl.append(" ")
+                return verIAUX(C,p,pl)        
+        def verI(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verIAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "J". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verJAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("J")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("J")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("J")==1:
+                    if "J"==pl[0]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "J"==pl[1]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "J"==pl[2]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "J"==pl[3]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "J"==pl[4]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "J"==pl[5]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "J"==pl[6]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "J"==pl[7]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "J"==pl[8]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "J"==pl[9]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"J")," ")
+                    pl.remove("J")
+                    C.insert(0,str(int(C[0])+1))
+                    btnJ=Button(ventana3,text="J",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=150,y=270)
+                    return verJAUX(C,p,pl)
+                else:
+                    if "J"==pl[0]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "J"==pl[1]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "J"==pl[2]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "J"==pl[3]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "J"==pl[4]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "J"==pl[5]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "J"==pl[6]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "J"==pl[7]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "J"==pl[8]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "J"==pl[9]:
+                         labelJ=Label(ventana3,text="J",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"J")," ")
+                    pl.remove("J")
+                    return verJAUX(C,p,pl)                   
+            else:
+                pl.append(" ")
+                return verJAUX(C,p,pl)        
+        def verJ(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verJAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "K". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verKAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("K")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("K")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("K")==1:
+                    if "K"==pl[0]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "K"==pl[1]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "K"==pl[2]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "K"==pl[3]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "K"==pl[4]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "K"==pl[5]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "K"==pl[6]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "K"==pl[7]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "K"==pl[8]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "K"==pl[9]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"K")," ")
+                    pl.remove("K")
+                    C.insert(0,str(int(C[0])+1))
+                    btnK=Button(ventana3,text="K",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=200,y=270)
+                    return verKAUX(C,p,pl)
+                else:
+                    if "K"==pl[0]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "K"==pl[1]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "K"==pl[2]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "K"==pl[3]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "K"==pl[4]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "K"==pl[5]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "K"==pl[6]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "K"==pl[7]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "K"==pl[8]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "K"==pl[9]:
+                         labelK=Label(ventana3,text="K",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"K")," ")
+                    pl.remove("K")
+                    return verKAUX(C,p,pl)    
+            else:
+                pl.append(" ")
+                return verKAUX(C,p,pl)        
+        def verK(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verKAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "K". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verLAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("L")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("L")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("L")==1:
+                    if "L"==pl[0]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "L"==pl[1]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "L"==pl[2]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "L"==pl[3]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "L"==pl[4]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "L"==pl[5]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "L"==pl[6]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "L"==pl[7]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "L"==pl[8]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "L"==pl[9]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"L")," ")
+                    pl.remove("L")
+                    C.insert(0,str(int(C[0])+1))
+                    btnL=Button(ventana3,text="L",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=250,y=270)
+                    return verLAUX(C,p,pl)
+                else:
+                    if "L"==pl[0]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "L"==pl[1]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "L"==pl[2]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "L"==pl[3]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "L"==pl[4]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "L"==pl[5]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "L"==pl[6]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "L"==pl[7]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "L"==pl[8]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "L"==pl[9]:
+                         labelL=Label(ventana3,text="L",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"L")," ")
+                    pl.remove("L")
+                    return verLAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verLAUX(C,p,pl)        
+        def verL(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verLAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "N". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verNAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("N")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("N")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("N")==1:
+                    if "N"==pl[0]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "N"==pl[1]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "N"==pl[2]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "N"==pl[3]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "N"==pl[4]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "N"==pl[5]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "N"==pl[6]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "N"==pl[7]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "N"==pl[8]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "N"==pl[9]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"N")," ")
+                    pl.remove("N")
+                    C.insert(0,str(int(C[0])+1))
+                    btnN=Button(ventana3,text="N",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=350,y=270)
+                    return verNAUX(C,p,pl)
+                else:
+                    if "N"==pl[0]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "N"==pl[1]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "N"==pl[2]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "N"==pl[3]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "N"==pl[4]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "N"==pl[5]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "N"==pl[6]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "N"==pl[7]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "N"==pl[8]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "N"==pl[9]:
+                         labelN=Label(ventana3,text="N",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"N")," ")
+                    pl.remove("N")
+                    return verNAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verNAUX(C,p,pl)        
+        def verN(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verNAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "Ñ". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verÑAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("Ñ")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("Ñ")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("Ñ")==1:
+                    if "Ñ"==pl[0]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Ñ"==pl[1]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Ñ"==pl[2]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Ñ"==pl[3]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Ñ"==pl[4]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Ñ"==pl[5]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Ñ"==pl[6]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Ñ"==pl[7]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Ñ"==pl[8]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Ñ"==pl[9]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Ñ")," ")
+                    pl.remove("Ñ")
+                    C.insert(0,str(int(C[0])+1))
+                    btnÑ=Button(ventana3,text="Ñ",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=400,y=270)
+                    return verÑAUX(C,p,pl)
+                else:
+                    if "Ñ"==pl[0]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Ñ"==pl[1]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Ñ"==pl[2]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Ñ"==pl[3]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Ñ"==pl[4]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Ñ"==pl[5]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Ñ"==pl[6]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Ñ"==pl[7]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Ñ"==pl[8]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Ñ"==pl[9]:
+                         labelN=Label(ventana3,text="Ñ",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Ñ")," ")
+                    pl.remove("Ñ")
+                    return verÑAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verÑAUX(C,p,pl)        
+        def verÑ(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verÑAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "O". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verOAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("O")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("O")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("O")==1:
+                    if "O"==pl[0]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "O"==pl[1]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "O"==pl[2]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "O"==pl[3]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "O"==pl[4]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "O"==pl[5]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "O"==pl[6]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "O"==pl[7]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "O"==pl[8]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "O"==pl[9]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"O")," ")
+                    pl.remove("O")
+                    C.insert(0,str(int(C[0])+1))
+                    btnO=Button(ventana3,text="O",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=450,y=270)
+                    return verOAUX(C,p,pl)
+                else:
+                    if "O"==pl[0]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "O"==pl[1]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "O"==pl[2]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "O"==pl[3]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "O"==pl[4]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "O"==pl[5]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "O"==pl[6]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "O"==pl[7]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "O"==pl[8]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "O"==pl[9]:
+                         labelO=Label(ventana3,text="O",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"O")," ")
+                    pl.remove("O")
+                    return verOAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verOAUX(C,p,pl)        
+        def verO(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verOAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "Q". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verQAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("Q")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("Q")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("Q")==1:
+                    if "Q"==pl[0]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Q"==pl[1]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Q"==pl[2]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Q"==pl[3]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Q"==pl[4]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Q"==pl[5]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Q"==pl[6]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Q"==pl[7]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Q"==pl[8]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Q"==pl[9]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Q")," ")
+                    pl.remove("Q")
+                    C.insert(0,str(int(C[0])+1))
+                    btnQ=Button(ventana3,text="Q",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=550,y=270)
+                    return verQAUX(C,p,pl)
+                else:
+                    if "Q"==pl[0]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Q"==pl[1]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Q"==pl[2]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Q"==pl[3]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Q"==pl[4]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Q"==pl[5]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Q"==pl[6]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Q"==pl[7]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Q"==pl[8]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Q"==pl[9]:
+                         labelQ=Label(ventana3,text="Q",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Q")," ")
+                    pl.remove("Q")
+                    return verQAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verQAUX(C,p,pl)        
+        def verQ(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verQAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "R". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verRAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("R")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("R")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("R")==1:
+                    if "R"==pl[0]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "R"==pl[1]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "R"==pl[2]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "R"==pl[3]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "R"==pl[4]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "R"==pl[5]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "R"==pl[6]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "R"==pl[7]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "R"==pl[8]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "R"==pl[9]:
+                         labelQ=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"R")," ")
+                    pl.remove("R")
+                    C.insert(0,str(int(C[0])+1))
+                    btnR=Button(ventana3,text="R",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=150,y=340)
+                    return verRAUX(C,p,pl)
+                else:
+                    if "R"==pl[0]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "R"==pl[1]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "R"==pl[2]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "R"==pl[3]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "R"==pl[4]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "R"==pl[5]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "R"==pl[6]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "R"==pl[7]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "R"==pl[8]:
+                         labelR=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "R"==pl[9]:
+                         labelQ=Label(ventana3,text="R",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"R")," ")
+                    pl.remove("R")
+                    return verRAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verRAUX(C,p,pl)        
+        def verR(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verRAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "S". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verSAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("S")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("S")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("S")==1:
+                    if "S"==pl[0]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "S"==pl[1]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "S"==pl[2]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "S"==pl[3]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "S"==pl[4]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "S"==pl[5]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "S"==pl[6]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "S"==pl[7]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "S"==pl[8]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "S"==pl[9]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"S")," ")
+                    pl.remove("S")
+                    C.insert(0,str(int(C[0])+1))
+                    btnS=Button(ventana3,text="S",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=200,y=340)
+                    return verSAUX(C,p,pl)
+                else:
+                    if "S"==pl[0]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "S"==pl[1]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "S"==pl[2]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "S"==pl[3]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "S"==pl[4]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "S"==pl[5]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "S"==pl[6]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "S"==pl[7]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "S"==pl[8]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "S"==pl[9]:
+                         labelS=Label(ventana3,text="S",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"S")," ")
+                    pl.remove("S")
+                    return verSAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verSAUX(C,p,pl)        
+        def verS(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verSAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "T". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verTAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("T")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("T")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("T")==1:
+                    if "T"==pl[0]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "T"==pl[1]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "T"==pl[2]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "T"==pl[3]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "T"==pl[4]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "T"==pl[5]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "T"==pl[6]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "T"==pl[7]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "T"==pl[8]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "T"==pl[9]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"T")," ")
+                    pl.remove("T")
+                    C.insert(0,str(int(C[0])+1))
+                    btnT=Button(ventana3,text="T",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=250,y=340)
+                    return verTAUX(C,p,pl)
+                else:
+                    if "T"==pl[0]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "T"==pl[1]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "T"==pl[2]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "T"==pl[3]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "T"==pl[4]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "T"==pl[5]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "T"==pl[6]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "T"==pl[7]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "T"==pl[8]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "T"==pl[9]:
+                         labelT=Label(ventana3,text="T",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"T")," ")
+                    pl.remove("T")
+                    return verTAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verTAUX(C,p,pl)        
+        def verT(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verTAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "U". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verUAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("U")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("U")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("U")==1:
+                    if "U"==pl[0]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "U"==pl[1]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "U"==pl[2]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "U"==pl[3]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "U"==pl[4]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "U"==pl[5]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "U"==pl[6]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "U"==pl[7]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "U"==pl[8]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "U"==pl[9]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"U")," ")
+                    pl.remove("U")
+                    C.insert(0,str(int(C[0])+1))
+                    btnU=Button(ventana3,text="U",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=300,y=340)
+                    return verUAUX(C,p,pl)
+                else:
+                    if "U"==pl[0]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "U"==pl[1]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "U"==pl[2]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "U"==pl[3]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "U"==pl[4]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "U"==pl[5]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "U"==pl[6]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "U"==pl[7]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "U"==pl[8]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "U"==pl[9]:
+                         labelU=Label(ventana3,text="U",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"U")," ")
+                    pl.remove("U")
+                    return verUAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verUAUX(C,p,pl)        
+        def verU(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verUAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "V". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verVAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("V")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("V")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("V")==1:
+                    if "V"==pl[0]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "V"==pl[1]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "V"==pl[2]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "V"==pl[3]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "V"==pl[4]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "V"==pl[5]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "V"==pl[6]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "V"==pl[7]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "V"==pl[8]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "V"==pl[9]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"V")," ")
+                    pl.remove("V")
+                    C.insert(0,str(int(C[0])+1))
+                    btnV=Button(ventana3,text="V",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=350,y=340)
+                    return verVAUX(C,p,pl)
+                else:
+                    if "V"==pl[0]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "V"==pl[1]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "V"==pl[2]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "V"==pl[3]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "V"==pl[4]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "V"==pl[5]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "V"==pl[6]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "V"==pl[7]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "V"==pl[8]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "V"==pl[9]:
+                         labelV=Label(ventana3,text="V",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"V")," ")
+                    pl.remove("V")
+                    return verVAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verVAUX(C,p,pl)        
+        def verV(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verVAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "W". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verWAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("W")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("W")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("W")==1:
+                    if "W"==pl[0]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "W"==pl[1]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "W"==pl[2]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "W"==pl[3]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "W"==pl[4]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "W"==pl[5]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "W"==pl[6]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "W"==pl[7]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "W"==pl[8]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "W"==pl[9]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"W")," ")
+                    pl.remove("W")
+                    C.insert(0,str(int(C[0])+1))
+                    btnW=Button(ventana3,text="W",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=400,y=340)
+                    return verWAUX(C,p,pl)
+                else:
+                    if "W"==pl[0]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "W"==pl[1]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "W"==pl[2]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "W"==pl[3]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "W"==pl[4]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "W"==pl[5]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "W"==pl[6]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "W"==pl[7]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "W"==pl[8]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "W"==pl[9]:
+                         labelW=Label(ventana3,text="W",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"W")," ")
+                    pl.remove("W")
+                    return verWAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verWAUX(C,p,pl)        
+        def verW(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verWAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "X". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verXAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("X")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("X")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("X")==1:
+                    if "X"==pl[0]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "X"==pl[1]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "X"==pl[2]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "X"==pl[3]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "X"==pl[4]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "X"==pl[5]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "X"==pl[6]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "X"==pl[7]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "X"==pl[8]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "X"==pl[9]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"X")," ")
+                    pl.remove("X")
+                    C.insert(0,str(int(C[0])+1))
+                    btnX=Button(ventana3,text="X",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=450,y=340)
+                    return verXAUX(C,p,pl)
+                else:
+                    if "X"==pl[0]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "X"==pl[1]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "X"==pl[2]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "X"==pl[3]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "X"==pl[4]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "X"==pl[5]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "X"==pl[6]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "X"==pl[7]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "X"==pl[8]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "X"==pl[9]:
+                         labelX=Label(ventana3,text="X",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"X")," ")
+                    pl.remove("X")
+                    return verXAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verXAUX(C,p,pl)        
+        def verX(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verXAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "Y". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verYAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("Y")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("Y")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("Y")==1:
+                    if "Y"==pl[0]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Y"==pl[1]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Y"==pl[2]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Y"==pl[3]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Y"==pl[4]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Y"==pl[5]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Y"==pl[6]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Y"==pl[7]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Y"==pl[8]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Y"==pl[9]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Y")," ")
+                    pl.remove("Y")
+                    C.insert(0,str(int(C[0])+1))
+                    btnY=Button(ventana3,text="Y",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=500,y=340)
+                    return verYAUX(C,p,pl)
+                else:
+                    if "Y"==pl[0]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Y"==pl[1]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Y"==pl[2]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Y"==pl[3]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Y"==pl[4]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Y"==pl[5]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Y"==pl[6]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Y"==pl[7]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Y"==pl[8]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Y"==pl[9]:
+                         labelY=Label(ventana3,text="Y",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Y")," ")
+                    pl.remove("Y")
+                    return verYAUX(C,p,pl)   
+            else:
+                pl.append(" ")
+                return verYAUX(C,p,pl)        
+        def verY(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verYAUX(C,p,pl)
+
+        """Esta función se activará al apretar el botón "Z". De entradas tiene a pl que es una lista de las letras que contiene la palabra; y a c que es un contador que me llevará la cuenta de los intentos restantes (y mostrará una imagen de acuerdo a ellos).
+        y además a p que es un string que contiene la palabra con la que se esta jugando. Una vez apretado el botón se inhabilitará. Lo que hace la función es revisar si la letra apretada esta contenida en la lista pl, si sí, estas aparecerán en las lineas correspondientes del ahorcado. No hay resricciones."""
+        def verZAUX(C,p,pl):
+            if len(pl)==10:
+                if list(" "*len(pl))==pl:
+                     messagebox.showinfo(title="¡Ganastes!",message="¡FELICIDADES! Has salvado a un muñequito de palitos :)")
+                     ventana3.destroy()
+                elif pl.count("Z")==0 and int(C[0])!=0:
+                    return imagen(C)
+                elif pl.count("Z")==0 and int(C[0])==0:
+                    blIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+                    img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+                    lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+                    messagebox.showinfo(title="¡Perdiste!",message="La palabra era: " + p +". Más suerte la próxima vez :(.")
+                    ventana3.destroy()
+                elif pl.count("Z")==1:
+                    if "Z"==pl[0]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Z"==pl[1]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Z"==pl[2]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Z"==pl[3]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Z"==pl[4]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Z"==pl[5]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Z"==pl[6]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Z"==pl[7]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Z"==pl[8]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Z"==pl[9]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Z")," ")
+                    pl.remove("Z")
+                    C.insert(0,str(int(C[0])+1))
+                    return verZAUX(C,p,pl)
+                else:
+                    if "Z"==pl[0]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=180,y=70)
+                    if "Z"==pl[1]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=225,y=70)
+                    if "Z"==pl[2]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=270,y=70)
+                    if "Z"==pl[3]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=320,y=70)
+                    if "Z"==pl[4]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=360,y=70)
+                    if "Z"==pl[5]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=410,y=70)
+                    if "Z"==pl[6]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=465,y=70)
+                    if "Z"==pl[7]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=515,y=70)
+                    if "Z"==pl[8]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=560,y=70)
+                    if "Z"==pl[9]:
+                         labelZ=Label(ventana3,text="Z",fg="blue",font=("Arial Black",18)).place(x=605,y=70)
+                    pl.insert(find(pl,"Z")," ")
+                    pl.remove("Z")
+                    btnZ=Button(ventana3,text="Z",fg="blue",font=("Arial Black",16),activebackground="yellow",state=DISABLED).place(x=550,y=340)
+                    return verZAUX(C,p,pl)
+
+            else:
+                pl.append(" ")
+                return verZAUX(C,p,pl)        
+        def verZ(C,p,pl):
+            C.insert(0,str(int(C[0])-1))
+            return verZAUX(C,p,pl)
+        
+        btnA=Button(ventana3,text="A",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verA(C,p,pl))).place(x=150,y=200)
+        btnB=Button(ventana3,text="B",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verB(C,p,pl))).place(x=200,y=200)
+        btnC=Button(ventana3,text="C",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verC(C,p,pl))).place(x=250,y=200)
+        btnD=Button(ventana3,text="D",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verD(C,p,pl))).place(x=300,y=200)
+        btnE=Button(ventana3,text="E",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verE(C,p,pl))).place(x=350,y=200)
+        btnF=Button(ventana3,text="F",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verF(C,p,pl))).place(x=400,y=200)
+        btnG=Button(ventana3,text="G",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verG(C,p,pl))).place(x=450,y=200)
+        btnH=Button(ventana3,text="H",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verH(C,p,pl))).place(x=500,y=200)
+        btnI=Button(ventana3,text="I",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verI(C,p,pl))).place(x=550,y=200)
+        btnJ=Button(ventana3,text="J",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verJ(C,p,pl))).place(x=150,y=270)
+        btnK=Button(ventana3,text="K",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verK(C,p,pl))).place(x=200,y=270)
+        btnL=Button(ventana3,text="L",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verL(C,p,pl))).place(x=250,y=270)
+        btnM=Button(ventana3,text="M",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verM(C,p,pl))).place(x=300,y=270)
+        btnN=Button(ventana3,text="N",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verN(C,p,pl))).place(x=350,y=270)
+        btnÑ=Button(ventana3,text="Ñ",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verÑ(C,p,pl))).place(x=400,y=270)
+        btnO=Button(ventana3,text="O",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verO(C,p,pl))).place(x=450,y=270)
+        btnP=Button(ventana3,text="P",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verP(C,p,pl))).place(x=500,y=270)
+        btnQ=Button(ventana3,text="Q",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verQ(C,p,pl))).place(x=550,y=270)
+        btnR=Button(ventana3,text="R",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verR(C,p,pl))).place(x=150,y=340)
+        btnS=Button(ventana3,text="S",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verS(C,p,pl))).place(x=200,y=340)
+        btnT=Button(ventana3,text="T",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verT(C,p,pl))).place(x=250,y=340)
+        btnU=Button(ventana3,text="U",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verU(C,p,pl))).place(x=300,y=340)
+        btnV=Button(ventana3,text="V",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verV(C,p,pl))).place(x=350,y=340)
+        btnW=Button(ventana3,text="W",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verW(C,p,pl))).place(x=400,y=340)
+        btnX=Button(ventana3,text="X",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verX(C,p,pl))).place(x=450,y=340)
+        btnY=Button(ventana3,text="Y",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verY(C,p,pl))).place(x=500,y=340)
+        btnZ=Button(ventana3,text="Z",fg="blue",font=("Arial Black",16),activebackground="yellow",command=(lambda:verZ(C,p,pl))).place(x=550,y=340)
+        """Esta función me enseñará el tip si el botón es apretado, y además lo deshabilitara; además me restará uno al contador y la imagen se actualizará. La entrada es un string que sería "p" que sería la palabra y el una lista llamada C que será un contador
+        . No hay restricciones"""
+        def tip(p,C):
+            print(p)
+            btnTip=Button(ventana3,text="TIP",fg="green",font=("Arial Black",22),activebackground="red",state=DISABLED).place(x=300,y=460)
+            C.insert(0,str(int(C[0])-1))
+            img0=PhotoImage(file=(C[0]+".gif"),master=ventana3)
+            lblimg0=Label(ventana3,image=img0).place(x=650,y=40)
+            lblIntentos=Label(ventana3,text=("Intentos Restantes: " +C[0]),font=("MS Gothic",16),fg="red").place(x=700,y= 450)
+            if p=="PAPA" or p=="MAMA" or p=="BISABUELO" or p=="BISABUELA":
+                Tip1=Label(ventana3,text="Si el(a) no existe, vos tampoco. Si el(a) exite vos también.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="PERA":
+                Tip2=Label(ventana3,text="Blanco por dentro y verde por fuera. Si queres que te lo diga espera...",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="AIRE" or p=="VIENTO" or p=="BRISA" or p=="AIREACION" or p=="OXIGENO":
+                Tip3=Label(ventana3,text="Te acompaño y estoy siempre vas. Aunque no me veas, vivir sin mi no podrás.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="BODA":
+                Tip4=Label(ventana3,text="Es una red sin medida para toda la vida. Unos quisieran de ella, y otras anhelan entrar.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="UVAS":
+                Tip5=Label(ventana3,text="El sol las madura, la mano las rompe, el pie las tritura y con la boca se beben.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="DEDO" or p=="EXTREMIDAD":
+                Tip6=Label(ventana3,text="Te sirve para escribir, dibujar, señalar y sentir.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="HUMO" or p=="NUBE" or p=="HUMAREDA":
+                Tip7=Label(ventana3,text="Tan alto, tan alto como un pino y pesa menos que un comino.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CAMA":
+                Tip8=Label(ventana3,text="Tiene cuatro patas, mas no puede andar, tiene cabecera y no sabe hablar.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="ARBOL" or p=="FLOR" or p=="PALO" or p=="PLANTA" or p=="ORQUIDEA" or p=="AGRACEJO" or p=="ARBUSTO":
+                Tip9=Label(ventana3,text="Bebo por los pies.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="JAPON":
+                Tip10=Label(ventana3,text="¿Cuál es el país que primero ríe y después explota.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="LLAVE" or p=="LLAVIN" or p=="PICAPORTE":
+                Tip11=Label(ventana3,text="Pequeña, pequeña como un ratón y guarda la casa como un león.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CALLE" or p=="AUTOPISTA" or p=="CARRETERA" or p=="PASO":
+                Tip12=Label(ventana3,text="Todos pasan por mí, yo nunca paso por nadie. Todos preguntan por mí, yo nunca pregunto por nadie.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="TIJERA" or p=="TENAZA" or p=="TIJERETA":
+                Tip13=Label(ventana3,text="En los pies tengo dos ojos, dos puntas en la cabeza. Para hacerme trabajar los ojos me has de tapar.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="ESPEJO" or p=="CRISTAL":
+                Tip14=Label(ventana3,text="Es verdad que lo ves, y es mentire que te ve. Sin embargo, son iguales el uno al otro.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="PINCEL" or p=="BROCHA":
+                Tip15=Label(ventana3,text="Mi vida tiene color, mas no podré trabajar cuando me quede calvo.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="MAÑANA" or p=="FUTURO" or p=="PORVENIR":
+                Tip16=Label(ventana3,text="¿Qúe cosa no ha sido y tiene que ser, y que cuando sea dejará de ser?",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="ESCOBA" or p=="ESCOBON" or p=="CEPILLO" or p=="BARREDERA" or p=="ESCOBILLA":
+                Tip17=Label(ventana3,text="Limpia y limpia sin parar, y siempre queda sucia.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="HUELLA" or p=="PISADA" or p=="RASTRO" or p=="MARCA" or p=="SEÑAL" or p=="PISTA":
+                Tip18=Label(ventana3,text="Soy la prueba terrenal de que estuviste en el mundo.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="MENTIRA" or p=="ENGAÑO" or p=="FALSEDAD" or p=="FALACIA":
+                Tip19=Label(ventana3,text="Por más que me cubren al final me descubren.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CLAVO" or p=="TORNILLO" or p=="TACHUELA" or p=="ESCARPIA" or p=="PUNTA":
+                Tip18=Label(ventana3,text="Me has comprado, tu esclavo me has llamado y me quebrantas la cabeza.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CONCIENCIA" or p=="ETICA" or p=="PESAR" or p=="MORALIDAD" or p=="ESCRUPULO":
+                Tip18=Label(ventana3,text="Te dice lo que está bien, te dice lo que está mal y no es ninguna persona.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CUCHARA" or p=="TENEDOR" or p=="CUCHARON" or p=="CUCHARILLA":
+                Tip18=Label(ventana3,text="Subo llena y bajo vacía, y si no me apuro, la sopa se enfría.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="DEFORME" or p=="AMORFO":
+                Tip18=Label(ventana3,text="Tengo 4 dedos, 3 piernas, un brazo,¿qué soy?",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="PLANCHA":
+                Tip18=Label(ventana3,text="Estiro bien lo arrugado y arrugo lo estirado con igual facilidad.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="FREBRERO":
+                Tip18=Label(ventana3,text="Somos 12 hermanos. Yo que el segundo nací, soy el menor entre todos,¿cómo puede ser así.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="MATRIMONIO" or p=="CASAMIENTO" or p=="DESPOSORIO" or p=="ENLACE":
+                Tip18=Label(ventana3,text="Es una red sin medida cuyos nudos duran toda la vida; de esta red unos quisieran salir, y otros anhelan entrar.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="RESPIRA" or p=="RESOLLAR" or p=="RESOPLAR":
+                Tip18=Label(ventana3,text="¿Qué le dijo una uva verde a una uva morada?",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="FOTOGRAFIA" or p=="MICROFILME" or p=="FOTO" or p=="RETRATO":
+                Tip18=Label(ventana3,text="Si soy joven, joven me quedo. Si soy viejo, viejo me quedo. Tengo boca y no te hablo, tengo ojos y no te veo.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CAMALEON":
+                Tip18=Label(ventana3,text="Ahora verde, ahora marrón. Soy cama, mas no te tumbas, porque también soy león.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="MURCIELAGO" or p=="VAMPIRO":
+                Tip18=Label(ventana3,text="Vuelo de noche, duermo de día y nunca verás pumas en el ala mía.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="ESTRELLA":
+                Tip18=Label(ventana3,text="De noche llegan sin ser invitadas, de día se pierden, pero no están extraviadas.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="CACHICHEN":
+                Tip18=Label(ventana3,text="¿Cómo se dice  99 en chino?",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="INYECCION" or p=="VACUNACION":
+                Tip18=Label(ventana3,text="Te la metí, te la saqué, te hice sangre y te la limpié. A nadie le gusta y alguna vez contigo la usé.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="PACIENCIA":
+                Tip18=Label(ventana3,text="Soy la roca más constante, no hay trabajo que me espante, ni dureza que me quebrante mi firmeza diamantina.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="BICHO" or p=="MOSCO" or p=="ZANCUDO" or p=="MOSQUITO":
+                Tip18=Label(ventana3,text="¿Cuál es el animal que muere en un aplauso?.",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="OSCURIDAD":
+                Tip18=Label(ventana3,text="¿Qué es lo que cuanto más grande es, menos se ve?",font=("Arial Black",13)).place(x=50,y=420)
+            if p=="GOLONDRINA":
+                Tip18=Label(ventana3,text="Sobre tierra y mar me encanta volar, goleta  también ondina, comienzo a viajar cuando el aire se ilumina..",font=("Arial Black",13)).place(x=50,y=420)
+            ventana3.mainloop()
+            if p=="RANA":
+                Tip18=Label(ventana3,text="Salta salta saltarin.",font=("Arial Black",13)).place(x=50,y=420)
+
+        btnTip=Button(ventana3,text="TIP",fg="green",font=("Arial Black",22),activebackground="red",command=(lambda:tip(p,C))).place(x=300,y=460)
+        ventana3.mainloop()
+    else:
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+"""Esta función tendra de entrada a s, que es un entero que será un entero que indicara la cantidad de palabras seleccionada. Las salidas son: C, el cual será el contador de la cantiad de intentos restantes,
+a p que será un string con la palabra seleccionada y a pl, la cual será una lista con cada una de las letras de la palabra P. Su funcion es mandar esos datos a la funcion abreVentana3AUX2.
+No hay restricciones."""
+def abreVentana3AUX1(s):
+    if s==0:
+        messagebox.showinfo(title="ERROR",message="Debes seleccionar al menos una opción.")
+        ventana2.deiconify()
+    elif s==1:
+        s=s+3
+        c=9
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        c=str(c)
+        C=list(c)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==2:
+        s=s+3
+        c=8
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        c=str(c)
+        C=list(c)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==3:
+        s=s+3
+        c=8
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==4:
+        s=s+3
+        c=7
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==5:
+        s=s+3
+        c=7
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==6:
+        s=s+3
+        c=6
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==7:
+        s=s+3
+        c=6
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+    elif s==8:
+        s=[4,5,6,7,8,9,10]
+        s=random.choice(s)
+        if s==4:
+            c=9
+        if s==5 or s==6:
+            c=8
+        if s==7 or s==8:
+            c=7
+        if s==9 or s==10:
+            s=6
+            c=6
+        c=str(c)
+        C=list(c)
+        p=random.choice(lstPalabras)
+        pl=list(p)
+        return abreVentana3AUX2(s,C,p,pl)
+"""Esta función me esconderá la ventana 2, e invocará una función auxiliar. No hay entradas y su salida será s, que me guardará que opción selecciono el usuario.
+Restricciones: El usuario debe escoger solamente 1 opción."""
+def abreVentana3():
+    s=selec.get()
+    ventana2.withdraw()
+    return abreVentana3AUX1(s)    
+
+btnCerrar2=Button(ventana2,text="ANTERIOR",command=vuelveVentana1).place(x=10,y=330)
+btnSiguiente2=Button(ventana2,text="SIGUIENTE",command=abreVentana3).place(x=390,y=330)
+
+
+#Primera ventana, solamente poseerá las instrucciones generales.
+ventana1=Tk()
+ventana1.geometry("1000x600+100+0")
+ventana1.resizable(width=FALSE , height=FALSE)
+ventana1.title("Ahorcado")
+
+lblBienvenidos=Label(ventana1,text="¡Bienvenidos!",font=("Agency FB ",22)).place(x=50,y=20)
+lblInstrucciones=Label(ventana1,text="Instrucciones Generales:",font=("Agency FB ",16)).place(x=50,y=150)
+lblInstruccion1=Label(ventana1,text="1) Se tiene que escoger la cantidad de letras de cada palabra (en caso de no saberlo, podés escoger que el programa te lo escoja).",font=("Agency FB",14)).place(x=50,y=180)
+lblInstruccion2=Label(ventana1,text="2) Depende de la cantidad de letras por palabras escogidas, tendrás una cantidad de intentos limitados. Cuando se te acaben habrás perdido:",font=("Agency FB",14)).place(x=50,y=210)
+lblInstruccion21=Label(ventana1,text="- 4 letras: 9 intentos.",font=("Agency FB",12)).place(x=70,y=240)
+lblInstruccion22=Label(ventana1,text="- 5 ó 6 letras: 8 intentos.",font=("Agency FB",12)).place(x=70,y=260)
+lblInstruccion23=Label(ventana1,text="- 7 ó 8 letras: 7 intentos.",font=("Agency FB",12)).place(x=70,y=280)
+lblInstruccion24=Label(ventana1,text="- 9 ó 10 letras: 6 intentos.",font=("Agency FB",12)).place(x=70,y=300)
+lblInstruccion3=Label(ventana1,text="3) Depende de la cantidad de letras escogida, entre más difícil comenzarás con menos intentos y por lo tanto con el muñeco de palitos más avanzado.",font=("Agency FB",14)).place(x=50,y=330)
+lblInstruccion4=Label(ventana1,text="4) Si lográs adivinar la palabra, y te sobrán intentos, habrás ganado.",font=("Agency FB",14)).place(x=50,y=360)
+lblInstruccion5=Label(ventana1,text="5) Si no sabés cuál es la palabra. Le das donde dice TIP, y te dará una adivinanza relacionada a cuál es la palabra. Sin embargo te contará como un intento.",font=("Agency FB",14)).place(x=50, y=390)
+lblInstruccion6=Label(ventana1,text="6) Cuando estés listo, nada más dale donde dice SIGUIENTE (Si no queres jugar dalde donde dice CERRAR) !Suerte!",font=("Agency FB",14)).place(x=50,y=420)
+"""Esta función esconderá la ventana1 y ocurrirá cuando el usuario estripe en "CERRAR" No tiene ni entradas ni salidas ni restricciones."""
+def destruyeVentana1():
+    ventana1.withdraw()
+"""Esta función me eseconderá a la ventana1 y me mostrará la ventana 2. Ocurrirá cuando el suario estripe en "SIGUIENTE". No hay restricciones."""
+def abreVentana2():
+    ventana1.withdraw()
+    ventana2.deiconify()
+btnCerrar1=Button(ventana1,text="CERRAR",command=destruyeVentana1).place(x=30,y=500)
+btnSiguiente1=Button(ventana1,text="SIGUIENTE",command=abreVentana2).place(x=900,y=500)
+
+ventana1.mainloop()
+ventana2.mainloop()

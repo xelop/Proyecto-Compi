@@ -9,6 +9,7 @@ import static lexer.Token.*;
 %state MYSTRING
 %state MYCHAR
 %state COMENTARIOBLOQUE
+%state COMENTARIOBLOQUE2
 
 %{
     //esto se copia directamente
@@ -37,7 +38,7 @@ Comentario = {ComentarioDeLinea}
 ComentarioDeLinea = "#" {InputCharacter}* {LineTerminator}?
 ComentarioDeBloque = \"\"\"([\s\S]*)\"\"\"
 
-PalabraRerservada = ("assert"|"break"|"class"|"continue"|"def"|"del"|"elif"|"else"|"except"|"exec"|"finally"|"for"|"from"|"global"|"if"|"import"|"in"|"is"|"lambda"|"pass"|"print"|"raise"|"return"|"try"|"while"|"int"|"float"|"string"|"list"|"bool")
+PalabraRerservada = ("assert"|"break"|"class"|"continue"|"def"|"del"|"elif"|"else"|"except"|"exec"|"finally"|"for"|"from"|"global"|"if"|"import"|"in"|"is"|"lambda"|"pass"|"print"|"raise"|"return"|"try"|"while"|"int"|"float"|"string"|"list"|"bool"|"None")
 
 opAritmeticos = "+"|"-"|"*"|"/"|"//"|"%"|"**"
 opComparadores = "=="|"!="|"<>"|">"|"<"|">="|"<="
@@ -52,6 +53,7 @@ opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"|"{"|"}"
 
 <YYINITIAL> {
  \"\"\"                         { string.setLength(0); yybegin(COMENTARIOBLOQUE);}
+ \'\'\'                         { string.setLength(0); yybegin(COMENTARIOBLOQUE2);}
  \"                             { string.setLength(0); cambioLinea = false; yybegin(MYSTRING); }
  {WhiteSpace}                   {/* ignore */}
  {Comentario}                   {/* ignore */}
@@ -105,7 +107,7 @@ opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"|"{"|"}"
                                         return STRING;
                                    }} /*Numero linea = adonde terminO*/
  <<EOF>>                         { yybegin(YYINITIAL); lexeme = "String sin terminar: " + string.toString(); return ERROR;}
-  \t                            { string.append('\t'); } 
+  \t                             { string.append('\t'); } 
   \u0020                         {string.append(' ');}
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
@@ -116,13 +118,25 @@ opDelimitadores ="("|")"|","|"."|":"|"\t"|"["|"]"|"{"|"}"
 }
 
 <COMENTARIOBLOQUE> {
-  \"\"\"                           { yybegin(YYINITIAL); System.out.println(string.toString());}
+  \"\"\"                           { yybegin(YYINITIAL);}
   \S                               { string.append( yytext() ); }
   <<EOF>>                          { yybegin(YYINITIAL); lexeme = "Comentario de bloque sin terminar: " + "\"\"\"" + string.toString(); return ERROR;}
-  \\t                            { string.append('\t'); }
-  \\n                            { string.append('\n'); }
-  \\r                            { string.append('\r'); }
-  \\\"                           { string.append('\"'); }
+  \\t                              { string.append('\t'); }
+  \\n                              { string.append('\n'); }
+  \\r                              { string.append('\r'); }
+  \\\"                             { string.append('\"'); }
+  [ ]                              { string.append(' '); }
+  {LineTerminator}                 { string.append(yytext()); }
+  \s                               { string.append(yytext()); }
+}
+<COMENTARIOBLOQUE2> {
+  \'\'\'                           { yybegin(YYINITIAL);}
+  \S                               { string.append( yytext() ); }
+  <<EOF>>                          { yybegin(YYINITIAL); lexeme = "Comentario de bloque sin terminar: " + "\'\'\'" + string.toString(); return ERROR;}
+  \\t                              { string.append('\t'); }
+  \\n                              { string.append('\n'); }
+  \\r                              { string.append('\r'); }
+  \\\"                             { string.append('\"'); }
   [ ]                              { string.append(' '); }
   {LineTerminator}                 { string.append(yytext()); }
   \s                               { string.append(yytext()); }
