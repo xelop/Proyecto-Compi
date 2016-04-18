@@ -1,13 +1,232 @@
-hola mundo
-ho
-la
-cuatro+cinco
-variable=6
-def funcion():
-999hola
-hola99
-__variable__
-mañana
-manána
-mañana
-_varia_ble
+import random
+"""Sera la clase fecha, en donde tendra los atributos basico de dia, mes y año"""
+class Fecha:
+    #zona de definicion de atributos
+    dia = 0
+    mes = 0
+    año = 0
+    #zona de definicion de operaciones
+    def __init__(self ):
+        self.dia = 0
+        self.mes = 0
+        self.año = 0
+    #d, m, a son enteros que representan el dia, mes y año respectivamente
+    def setFecha(self, d, m, a):
+        self.dia = d
+        self.mes = m
+        self.año = a
+        #para ver la fecha lindamente
+    def getFecha(self):
+        h= str(self.dia) +"/" + str(self.mes)+"/" + str(self.año)
+        return h
+
+"""Sera la clase de la boleta para poder inscriberse en la carrera, unica para cada persona; poseyendo los datos generales de esta"""
+class Boleta:
+    c=0 #su numero de solicitud unico, que al mismo tiempo sera su numero de chip. Por decirlo asi sera su codigo unico
+    ced=0 #cedula del participante
+    nombre= "" #del corredor
+    genero="" #masculio o femenidno
+    edad=0
+    fNac= Fecha() #fecha de nacimiento del corredor
+    talla="" #de la camiseta del corredor
+    categoria=0 #0 para Pro, 1 para Vet, 2 para Afi, 3 para Prin
+    retiro=bool #True si retiro el paquete y False si no lo hizo
+    def __init__(self):
+        self.c=0
+        self.ced=0
+        self.nombre=""
+        self.genero=""
+        self.edad=0
+        self.fNac=Fecha()
+        self.talla=""
+        self.categoria=0
+        self.retiro= bool
+    def setCodigo(self,cod):
+        self.c=cod
+    def getCodigo(self):
+        return self.c
+    def setCed(self,cedu):
+        self.ced=cedu
+    def getCed(self,cedu):
+        return self.ced
+    def setNombre(self,n):
+        self.nombre=n
+    def getNombre(self):
+        return self.nombre
+    def setEdad(self,e):
+        self.edad=e
+    def getEdad(self):
+        return self.edad
+    def setGenero(self,g):
+        self.genero=g
+    def getGenero(self):
+        return self.genero
+    def setFNac(self,f):#f sera una instancia de objeto Fecha()
+        self.fNac=f
+    def setTalla(self,t):
+        self.talla=t
+    def getTalla(self):
+        return self.talla
+    def setCategoria(self,cat): # para poner su categoria
+        self.categoria=cat
+    def getCategoria(self):
+        return self.categoria
+    def setRetiro(self,r): #r sera un valor boleeano
+        self.retiro=r
+    def getRetiro(self):
+        return self.retiro
+    def verBoleta(self): #agregar al uml, sera para ver los datos de la boleta lindamente
+        return "Codigo: " + str(self.c) + ". Nombre: " + self.nombre+ ". Cedula: " + str(self.ced) + ". Edad: " + str(self.edad) + ". Genero: " + self.genero + ". Fecha de Nacimiento: " + self.fNac.getFecha()+". Talla: " + self.talla +". Categoria: " + str(self.categoria) + ".¿Retiro?: " + str(self.retiro)
+"""Sera la calse chip, entragado unicamente al corredor en una fecha dada. Es unico para cada corredor"""
+class Chip:
+    boleta=Boleta()
+    dorsal=0 #es el numero unico de cada chipe que correpondde al numero de soliciutd de incripcion
+    segundos=0
+    minutos=0
+    horas=0 #seran para fijar el tiempo, para ver cuanto duro el corredor en realizar la carrera
+    def __init__(self):
+        self.boleta=Boleta()
+        self.dorsal=0
+        self.segundos=0
+        self.minutos=0
+        self.horas=0
+    def setBoleta(self,bole): #para ligar una boleta a un chip
+        self.boleta=bole
+    def fijarDorsal(self):
+        self.dorsal=self.boleta.getCodigo()
+    def setDuracion(self,s,m,h): #s seran los segundos, m los minutos y h las horas
+        self.segundos=s
+        self.minutos=m
+        self.horas=h
+    def getSegundos(self):
+        return self.segundos
+    def getMinutos(self):
+        return self.minutos
+    def getHoras(self):
+        return self.horas
+    def verDuracion(self): #para ver cuanto duro el corredor en la carrera lindamente
+        return "Duro : " + str(self.horas) + " horas, " + str(self.minutos) + " minutos, " + str(self.segundos) + " segundos." + "\n"
+    
+"""La clase carrera, con los datos generales de una carrera, y sus respectivas listas de donde fueron metidos los corredores"""
+class Carrera:
+    nombre="" #el nombre de la carrera
+    fecha=Fecha() #un ojbeto de tipo fecha
+    kil=0 #cantidad de kilometros
+    lugar="" #lugar fisico de la carrera
+    precio=0 #sera un entero, pero sera asumido que seran colones
+    canMax=0 #cantidad maxima de inscripciones
+    lpro=[] #lista donde estaran los pros
+    lvet=[] #lista donde estaran los veteranos
+    lafi=[] #lista donde estaran losa aficionados
+    lprin=[] #lista donde estaran los principiantes
+
+    def __init__(self):
+        self.nombre=""
+        self.fecha=Fecha()
+        self.kil=0
+        self.lugar=""
+        self.precio=0
+        self.canMax=0
+        self.lpro=[]
+        self.lvet=[]
+        self.lafi=[]
+        self.lprin=[]
+    def setNombre(self,n):
+        self.nombre=n
+    def getNombre(self):
+        return self.nombre
+    def setFecha(self,f):
+        self.fecha=f
+    def setKil(self,k): #kilometros de las distancia total de la fecha
+        self.kil=k
+    def getKil(self):
+        return self.kil
+    def setLugar(self,l):
+        self.lugar=l
+    def getLugar(self):
+        return self.lugar
+    def setPrecio(self,p):
+        self.precio=p
+    def getPrecio(self):
+        return self.precio
+    def setCanMax(self,m):
+        self.canMax=m
+    def getCanMax(self):
+        return self.canMax
+    def agregaPro(self,b): #b sera una boleta, para agregarla a la lista de pros
+        lpro.append(b)
+    def agregaVet(self,b): #b sera una boleta, para agaregarla a la lista de veteranos
+        lvet.append(b)
+    def agregaAfi(self,b): #b sera una boleta, para agregarla a la lista de aficionados
+        lafi.append(b)
+    def agregaPrin(self,b): #b sera una boleta, para agregarla a la lista de principiantes
+        lprin.append(b)
+    ####LA PARTE DE PUNTOS EXTRAAAS :)
+    #def determinarGanadores(self): 
+    def verCarrera(self): #para ver lindamente los datos basicos de una carrera
+        return "Nombre: " +self.nombre+ ". Fecha: " +self.fecha.getFecha()+ ". Distancia: " + str(self.kil) + "km. Lugar: " + self.lugar + ". Precio (en colones): " + str(self.precio) +". Cantidad maxima de inscripciones: " + str(self.canMax) + "\n"
+
+####PROBADOR
+    
+l=["Josue","Juan","Humberto","Carlos","Ericka","Joshua","Catalina","Luis","Alejandro","Kevin","Wilfredo","Goku","Jose","David","Carlos","Carlillos","William","Humbi","Diana","Mariana"]
+
+#crearemos la carrera con sus datos basicos, muchos creados aleatoriamente :).
+carrera=Carrera()
+carrera.setNombre("La carrera de la muerte")
+fecha=Fecha()
+fecha.setFecha(random.randint(1,28),random.randint(1,12),random.randint(1900,2013))
+carrera.setFecha(fecha)
+carrera.setKil(random.randint(1000,10000))
+carrera.setPrecio(random.randint(15000,40000))
+carrera.setCanMax(20)
+carrera.setLugar(random.choice(["Antartida","Cerro de la Muerte","El mundo de los ponies rosados","TEC","Casa de Ericka"]))
+print(carrera.verCarrera())
+               
+print("Las boletas de los corredores! (y su tiempo de duracion, si no viene es que no participo)"+"\n")
+#crearemos la boleta
+c=1 #codigo unico para cada boleta, comienza en 1
+global sifue #personas que si fueron a las inspripciones
+global nofue #personas ue no fueron a las incripciones
+sifue=0
+nofue=0
+for i in range(len(l)):
+    boleta=Boleta()
+    boleta.setCodigo(c)
+    c=c+1
+    ced=random.randint(10000,1000000000000)#el numero de cedula
+    boleta.setCed(ced)
+    boleta.setNombre(l[i])
+    boleta.setEdad(random.randint(5,100))
+    boleta.setGenero(random.choice(["Masculino","Femenino"]))
+    fechilla=Fecha()
+    fechilla.setFecha(random.randint(1,28),random.randint(1,12),random.randint(1900,2013))
+    boleta.setFNac(fechilla)
+    boleta.setTalla(random.choice(["XS","S","M","L","XL"]))
+    boleta.setCategoria(random.randint(0,3))
+    boleta.setRetiro(random.choice([True,False]))
+    print(boleta.verBoleta())
+    """Agregando cada corredor a su distitna categoria"""
+    if boleta.getCategoria==0:
+        carrera.agregarPro(boleta)
+    if boleta.getCategoria==1:
+        carrera.agregarVet(boleta)
+    if boleta.getCategoria==2:
+        carrera.agregarAfi(boleta)
+    if boleta.getCategoria==3:
+        carrera.agregarPrin(boleta)
+    if boleta.getRetiro()==True: #gente que si fue por su paquete, se le tendra que dar un chip
+        global sifue
+        sifue=sifue+1
+        chip=Chip()
+        chip.setBoleta(boleta)
+        chip.fijarDorsal()
+        chip.setDuracion(random.randint(0,59),random.randint(0,59),random.randint(0,3))
+        print("Su tiempo de duracion: "+chip.verDuracion())
+    if boleta.getRetiro()==False:
+        global nofue
+        nofue=nofue+1
+        print("No tiene tiempo de duracion, pues se desperdicio la plata :(" + "\n")
+global sifue
+global nofue
+print("Fueron una cantidad de: " + str(sifue) +" personas.")
+print("No fueron una cantidad de: " + str(nofue) +" personas.")
